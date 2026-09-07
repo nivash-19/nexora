@@ -1,0 +1,282 @@
+[
+  {
+    "cell_id": "cell_manali_001",
+    "lat": 13.1678,
+    "lon": 80.2612,
+    "zone": "Manali",
+    "heat_score": 0.864,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.96,
+      "V_norm": 0.88,
+      "I_norm": 0.92,
+      "W_norm": 0.60
+    }
+  },
+  {
+    "cell_id": "cell_manali_002",
+    "lat": 13.1645,
+    "lon": 80.2578,
+    "zone": "Manali",
+    "heat_score": 0.838,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.94,
+      "V_norm": 0.82,
+      "I_norm": 0.88,
+      "W_norm": 0.60
+    }
+  },
+  {
+    "cell_id": "cell_koyambedu_001",
+    "lat": 13.0692,
+    "lon": 80.1944,
+    "zone": "Koyambedu",
+    "heat_score": 0.812,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.88,
+      "V_norm": 0.86,
+      "I_norm": 0.95,
+      "W_norm": 0.72
+    }
+  },
+  {
+    "cell_id": "cell_ambattur_001",
+    "lat": 13.1124,
+    "lon": 80.1582,
+    "zone": "Ambattur",
+    "heat_score": 0.796,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.86,
+      "V_norm": 0.80,
+      "I_norm": 0.91,
+      "W_norm": 0.60
+    }
+  },
+  {
+    "cell_id": "cell_koyambedu_002",
+    "lat": 13.0721,
+    "lon": 80.1985,
+    "zone": "Koyambedu",
+    "heat_score": 0.781,
+    "cause": "low_vegetation",
+    "contributing_factors": {
+      "T_norm": 0.72,
+      "V_norm": 0.97,
+      "I_norm": 0.88,
+      "W_norm": 0.66
+    }
+  },
+  {
+    "cell_id": "cell_manali_003",
+    "lat": 13.1712,
+    "lon": 80.2641,
+    "zone": "Manali",
+    "heat_score": 0.774,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.85,
+      "V_norm": 0.74,
+      "I_norm": 0.86,
+      "W_norm": 0.70
+    }
+  },
+  {
+    "cell_id": "cell_ambattur_002",
+    "lat": 13.1165,
+    "lon": 80.1523,
+    "zone": "Ambattur",
+    "heat_score": 0.763,
+    "cause": "high_impervious_surface",
+    "contributing_factors": {
+      "T_norm": 0.68,
+      "V_norm": 0.75,
+      "I_norm": 0.98,
+      "W_norm": 0.70
+    }
+  },
+  {
+    "cell_id": "cell_teynampet_001",
+    "lat": 13.0425,
+    "lon": 80.2482,
+    "zone": "Teynampet",
+    "heat_score": 0.752,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.80,
+      "V_norm": 0.76,
+      "I_norm": 0.87,
+      "W_norm": 0.60
+    }
+  },
+  {
+    "cell_id": "cell_teynampet_002",
+    "lat": 13.0388,
+    "lon": 80.2514,
+    "zone": "Teynampet",
+    "heat_score": 0.741,
+    "cause": "high_impervious_surface",
+    "contributing_factors": {
+      "T_norm": 0.65,
+      "V_norm": 0.77,
+      "I_norm": 0.95,
+      "W_norm": 0.60
+    }
+  },
+  {
+    "cell_id": "cell_koyambedu_003",
+    "lat": 13.0655,
+    "lon": 80.1912,
+    "zone": "Koyambedu",
+    "heat_score": 0.738,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.79,
+      "V_norm": 0.78,
+      "I_norm": 0.85,
+      "W_norm": 0.68
+    }
+  },
+  {
+    "cell_id": "cell_ambattur_003",
+    "lat": 13.1089,
+    "lon": 80.1610,
+    "zone": "Ambattur",
+    "heat_score": 0.732,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.78,
+      "V_norm": 0.72,
+      "I_norm": 0.89,
+      "W_norm": 0.76
+    }
+  },
+  {
+    "cell_id": "cell_perungudi_001",
+    "lat": 12.9682,
+    "lon": 80.2455,
+    "zone": "Perungudi",
+    "heat_score": 0.725,
+    "cause": "low_vegetation",
+    "contributing_factors": {
+      "T_norm": 0.67,
+      "V_norm": 0.91,
+      "I_norm": 0.82,
+      "W_norm": 0.60
+    }
+  },
+  {
+    "cell_id": "cell_annanagar_001",
+    "lat": 13.0875,
+    "lon": 80.2142,
+    "zone": "Anna Nagar",
+    "heat_score": 0.718,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.76,
+      "V_norm": 0.70,
+      "I_norm": 0.87,
+      "W_norm": 0.70
+    }
+  },
+  {
+    "cell_id": "cell_perungudi_002",
+    "lat": 12.9641,
+    "lon": 80.2488,
+    "zone": "Perungudi",
+    "heat_score": 0.708,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.75,
+      "V_norm": 0.72,
+      "I_norm": 0.86,
+      "W_norm": 0.70
+    }
+  },
+  {
+    "cell_id": "cell_annanagar_002",
+    "lat": 13.0832,
+    "lon": 80.2081,
+    "zone": "Anna Nagar",
+    "heat_score": 0.697,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.73,
+      "V_norm": 0.67,
+      "I_norm": 0.85,
+      "W_norm": 0.74
+    }
+  },
+  {
+    "cell_id": "cell_teynampet_003",
+    "lat": 13.0458,
+    "lon": 80.2441,
+    "zone": "Teynampet",
+    "heat_score": 0.691,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.71,
+      "V_norm": 0.69,
+      "I_norm": 0.85,
+      "W_norm": 0.70
+    }
+  },
+  {
+    "cell_id": "cell_ambattur_004",
+    "lat": 13.1205,
+    "lon": 80.1488,
+    "zone": "Ambattur",
+    "heat_score": 0.686,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.72,
+      "V_norm": 0.66,
+      "I_norm": 0.85,
+      "W_norm": 0.80
+    }
+  },
+  {
+    "cell_id": "cell_perungudi_003",
+    "lat": 12.9610,
+    "lon": 80.2415,
+    "zone": "Perungudi",
+    "heat_score": 0.678,
+    "cause": "far_from_water",
+    "contributing_factors": {
+      "T_norm": 0.62,
+      "V_norm": 0.68,
+      "I_norm": 0.78,
+      "W_norm": 0.90
+    }
+  },
+  {
+    "cell_id": "cell_annanagar_003",
+    "lat": 13.0910,
+    "lon": 80.2175,
+    "zone": "Anna Nagar",
+    "heat_score": 0.665,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.70,
+      "V_norm": 0.65,
+      "I_norm": 0.80,
+      "W_norm": 0.70
+    }
+  },
+  {
+    "cell_id": "cell_perungudi_004",
+    "lat": 12.9715,
+    "lon": 80.2520,
+    "zone": "Perungudi",
+    "heat_score": 0.652,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.68,
+      "V_norm": 0.64,
+      "I_norm": 0.78,
+      "W_norm": 0.70
+    }
+  }
+]
