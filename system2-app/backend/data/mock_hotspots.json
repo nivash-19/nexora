@@ -1,0 +1,170 @@
+[
+  {
+    "cell_id": "CHN-MAN-01",
+    "lat": 13.1672,
+    "lon": 80.2625,
+    "zone": "Manali",
+    "heat_score": 0.94,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.98,
+      "V_norm": 0.15,
+      "I_norm": 0.89,
+      "W_norm": 0.65
+    }
+  },
+  {
+    "cell_id": "CHN-MAN-02",
+    "lat": 13.1750,
+    "lon": 80.2580,
+    "zone": "Manali",
+    "heat_score": 0.88,
+    "cause": "high_impervious_surface",
+    "contributing_factors": {
+      "T_norm": 0.89,
+      "V_norm": 0.12,
+      "I_norm": 0.94,
+      "W_norm": 0.58
+    }
+  },
+  {
+    "cell_id": "CHN-KOY-01",
+    "lat": 13.0694,
+    "lon": 80.1948,
+    "zone": "Koyambedu",
+    "heat_score": 0.91,
+    "cause": "high_impervious_surface",
+    "contributing_factors": {
+      "T_norm": 0.92,
+      "V_norm": 0.10,
+      "I_norm": 0.95,
+      "W_norm": 0.72
+    }
+  },
+  {
+    "cell_id": "CHN-KOY-02",
+    "lat": 13.0620,
+    "lon": 80.2015,
+    "zone": "Koyambedu",
+    "heat_score": 0.82,
+    "cause": "low_vegetation",
+    "contributing_factors": {
+      "T_norm": 0.84,
+      "V_norm": 0.08,
+      "I_norm": 0.82,
+      "W_norm": 0.70
+    }
+  },
+  {
+    "cell_id": "CHN-AMB-01",
+    "lat": 13.1143,
+    "lon": 80.1548,
+    "zone": "Ambattur",
+    "heat_score": 0.86,
+    "cause": "high_impervious_surface",
+    "contributing_factors": {
+      "T_norm": 0.87,
+      "V_norm": 0.18,
+      "I_norm": 0.91,
+      "W_norm": 0.62
+    }
+  },
+  {
+    "cell_id": "CHN-AMB-02",
+    "lat": 13.1085,
+    "lon": 80.1620,
+    "zone": "Ambattur",
+    "heat_score": 0.79,
+    "cause": "far_from_water",
+    "contributing_factors": {
+      "T_norm": 0.78,
+      "V_norm": 0.22,
+      "I_norm": 0.75,
+      "W_norm": 0.88
+    }
+  },
+  {
+    "cell_id": "CHN-ANN-01",
+    "lat": 13.0850,
+    "lon": 80.2100,
+    "zone": "Anna Nagar",
+    "heat_score": 0.76,
+    "cause": "low_vegetation",
+    "contributing_factors": {
+      "T_norm": 0.75,
+      "V_norm": 0.24,
+      "I_norm": 0.72,
+      "W_norm": 0.60
+    }
+  },
+  {
+    "cell_id": "CHN-ANN-02",
+    "lat": 13.0925,
+    "lon": 80.2175,
+    "zone": "Anna Nagar",
+    "heat_score": 0.68,
+    "cause": "far_from_water",
+    "contributing_factors": {
+      "T_norm": 0.69,
+      "V_norm": 0.35,
+      "I_norm": 0.64,
+      "W_norm": 0.82
+    }
+  },
+  {
+    "cell_id": "CHN-TEY-01",
+    "lat": 13.0418,
+    "lon": 80.2507,
+    "zone": "Teynampet",
+    "heat_score": 0.84,
+    "cause": "high_impervious_surface",
+    "contributing_factors": {
+      "T_norm": 0.86,
+      "V_norm": 0.14,
+      "I_norm": 0.92,
+      "W_norm": 0.45
+    }
+  },
+  {
+    "cell_id": "CHN-TEY-02",
+    "lat": 13.0480,
+    "lon": 80.2430,
+    "zone": "Teynampet",
+    "heat_score": 0.73,
+    "cause": "low_vegetation",
+    "contributing_factors": {
+      "T_norm": 0.74,
+      "V_norm": 0.19,
+      "I_norm": 0.70,
+      "W_norm": 0.50
+    }
+  },
+  {
+    "cell_id": "CHN-PER-01",
+    "lat": 12.9654,
+    "lon": 80.2461,
+    "zone": "Perungudi",
+    "heat_score": 0.89,
+    "cause": "extreme_temperature",
+    "contributing_factors": {
+      "T_norm": 0.93,
+      "V_norm": 0.16,
+      "I_norm": 0.88,
+      "W_norm": 0.52
+    }
+  },
+  {
+    "cell_id": "CHN-PER-02",
+    "lat": 12.9730,
+    "lon": 80.2385,
+    "zone": "Perungudi",
+    "heat_score": 0.71,
+    "cause": "far_from_water",
+    "contributing_factors": {
+      "T_norm": 0.72,
+      "V_norm": 0.28,
+      "I_norm": 0.65,
+      "W_norm": 0.79
+    }
+  }
+]
