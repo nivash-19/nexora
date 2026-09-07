@@ -1,0 +1,62 @@
+{
+  "Manali": {
+    "mean_lst_celsius": 41.5,
+    "mean_ndvi": 0.11,
+    "source": "Landsat-8/9 Chennai Climatological Baseline",
+    "center": [
+      13.1662,
+      80.2581
+    ],
+    "description": "Heavy industrial belt, petrochemicals & thermal emissions"
+  },
+  "Ambattur": {
+    "mean_lst_celsius": 39.2,
+    "mean_ndvi": 0.14,
+    "source": "Landsat-8/9 Chennai Climatological Baseline",
+    "center": [
+      13.1143,
+      80.1548
+    ],
+    "description": "Industrial estate, high roof surface fraction, dense factories"
+  },
+  "Koyambedu": {
+    "mean_lst_celsius": 38.6,
+    "mean_ndvi": 0.12,
+    "source": "Landsat-8/9 Chennai Climatological Baseline",
+    "center": [
+      13.0715,
+      80.1998
+    ],
+    "description": "Transit hub & wholesale market, high asphalt and low canopy"
+  },
+  "Teynampet": {
+    "mean_lst_celsius": 36.8,
+    "mean_ndvi": 0.18,
+    "source": "Landsat-8/9 Chennai Climatological Baseline",
+    "center": [
+      13.0418,
+      80.247
+    ],
+    "description": "Dense commercial & arterial corridor along Anna Salai"
+  },
+  "Perungudi": {
+    "mean_lst_celsius": 35.4,
+    "mean_ndvi": 0.24,
+    "source": "Landsat-8/9 Chennai Climatological Baseline",
+    "center": [
+      12.9654,
+      80.2435
+    ],
+    "description": "OMR IT corridor adjacent to Pallikaranai marshland"
+  },
+  "Anna Nagar": {
+    "mean_lst_celsius": 33.9,
+    "mean_ndvi": 0.32,
+    "source": "Landsat-8/9 Chennai Climatological Baseline",
+    "center": [
+      13.085,
+      80.21
+    ],
+    "description": "Planned residential/commercial grid with urban parks and tree cover"
+  }
+}
