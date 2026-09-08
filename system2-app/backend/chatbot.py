@@ -61,7 +61,38 @@ INSTRUCTIONS:
 # Authoritative Local Q&A Knowledge Engine for offline or fallback operation
 KNOWLEDGE_BASE = [
     {
-        "keywords": ["cost", "price", "budget", "capex", "rate", "how much", "expensive"],
+        "keywords": ["why only these", "not all zone", "all zone", "why not all", "why these zone", "why only 7", "selected zone", "why not whole chennai", "zone selection", "only these zones"],
+        "answer": """### Why HeatScape Focuses on These 7 Priority Zones (Not All 15 GCC Zones)
+
+The Greater Chennai Corporation (GCC) encompasses 15 administrative zones (200 wards). HeatScape intentionally targets **7 priority sentinel zones** for rigorous engineering reasons:
+
+1. **Maximum Thermal Anomaly**: Historical Landsat-8/9 thermal passes identify these 7 zones as harboring Chennai's highest daytime surface temperatures (>43°C to 48°C), whereas southern coastal zones (e.g., Sholinganallur, Besant Nagar) benefit from consistent sea-breeze moderation.
+2. **Archetypal Urban Typologies (Representative Coverage)**:
+   - **Industrial Heavy**: *Manali* (refineries, petrochemicals) & *Ambattur* (auto-manufacturing, fabrication).
+   - **Commercial & Transit Nodes**: *Koyambedu* (wholesale perishable food market & CMBT bus hub) & *Teynampet* (CBD high-rise corridor along Anna Salai).
+   - **Dense Residential & Urban Fabric**: *Anna Nagar* (grid-planned residential/commercial with declining canopy) & *Royapuram* (ultra-dense historic coastal tenements, zero setback).
+   - **Wetland/Marshland Transition**: *Perungudi* (Pallikaranai marsh buffer + OMR IT corridor + landfill heat island).
+3. **High Return on Public Capital (ROI)**: Intervening in these 7 zones protects over **2.8 million highly exposed daily workers, street vendors, and residents**, maximizing human impact per rupee spent.
+4. **Scalable Blueprint**: Once validated across these diverse typologies, the 250m micro-grid methodology directly scales to the remaining 8 GCC zones."""
+    },
+    {
+        "keywords": ["where did i get data", "where did you get data", "data source", "data origin", "source of data", "satellite source", "where is data from", "dataset", "landsat", "sentinel"],
+        "answer": """### Provenance & Sources of HeatScape Data
+
+Every data point, temperature reading, and cost benchmark in HeatScape is grounded in authoritative scientific and municipal repositories:
+
+1. **Thermal & Vegetation Satellite Observations**:
+   - **Landsat 8 & 9 (USGS/NASA)**: Thermal Infrared Sensor 2 (TIRS-2, Bands 10 & 11) calibrated via Split-Window / Radiative Transfer Equation to derive Land Surface Temperature (LST) at 30m resolution.
+   - **Sentinel-2 MSI (European Space Agency)**: 10m Multi-Spectral Imagery used to calculate Normalized Difference Vegetation Index (NDVI) and canopy fraction.
+2. **Urban Morphology & Impervious Density**:
+   - **OpenStreetMap & Tamil Nadu GIS**: High-resolution building footprints, road networks, and waterbody polygons to compute impervious surface index ($I_{norm}$) and water distance ($W_{norm}$).
+3. **Municipal Cost Benchmarks & Rates**:
+   - **Greater Chennai Corporation (GCC) Schedule of Rates (2023-2024)**: Parks and forestry schedule for native saplings, civil rates for pavement albedo coatings.
+   - **India Cooling Action Plan (ICAP) & Bureau of Energy Efficiency (BEE)**: Thermal mitigation costs and cool roof reflectance specifications ($SRI > 100$).
+   - **C40 Cities & TERI Studies**: Living green roof and bioswale installation and lifecycle cost schedules."""
+    },
+    {
+        "keywords": ["cost", "price", "capex", "rate", "how much", "expensive", "schedule of rates", "standard cost", "cost breakdown"],
         "answer": """### Standardized Municipal Cost Benchmarks (INR)
 
 All costs in HeatScape are derived from **Greater Chennai Corporation (GCC)** schedules of rates and the **India Cooling Action Plan (ICAP)**:
@@ -73,10 +104,10 @@ All costs in HeatScape are derived from **Greater Chennai Corporation (GCC)** sc
 | **Living Green Roofs** | **₹2,400 / m²** (₹1,800 – ₹3,000) | 100 m² = **₹2,40,000** | -2.5°C to -4.0°C microclimate |
 | **Bioswales & Misting** | **₹65,000 / unit** (₹50k – ₹80k) | 1 pavilion = **₹65,000** | -1.5°C to -2.2°C pedestrian |
 
-*Note: In Tier 2, Gemini AI proposes creative variations (e.g. biosolar canopies or misting pergolas), but costs are strictly locked to these verified municipal rates to avoid hallucinations.*"""
+*Critical Platform Rule: In Tier 2, Gemini AI proposes contextual variations (e.g. biosolar canopies or misting pergolas), but costs are strictly locked to these verified municipal rates so the model never hallucinates budgets.*"""
     },
     {
-        "keywords": ["manali", "petrochem", "refinery", "industrial"],
+        "keywords": ["manali", "petrochem", "refinery", "industrial shed"],
         "answer": """### Why Living Green Biosolar Roofs are Chosen for Manali
 
 1. **High Thermal Mass of Metal Structures**: Manali is dominated by expansive petrochemical refineries, container freight stations, and unshaded corrugated metal warehouse sheds. These metal surfaces reach upwards of **58°C** in afternoon sun.
@@ -85,7 +116,7 @@ All costs in HeatScape are derived from **Greater Chennai Corporation (GCC)** sc
 4. **Beneficiaries**: Over 140,000 shift workers, logistics technicians, and residents in nearby worker colonies."""
     },
     {
-        "keywords": ["koyambedu", "market", "wholesale", "vendor"],
+        "keywords": ["koyambedu", "market", "wholesale", "vendor", "perishable"],
         "answer": """### Why Cool Roofs & Misting Corridors are Chosen for Koyambedu
 
 1. **Massive Bitumen & Concrete Footprint**: Koyambedu hosts Asia's largest wholesale perishable goods and transport market, featuring extensive asphalt loading bays and concrete rooftops that trap heat ($I_{norm} > 0.90$).
@@ -93,7 +124,7 @@ All costs in HeatScape are derived from **Greater Chennai Corporation (GCC)** sc
 3. **Vendor Heat Relief**: Solar misting corridors along pedestrian aisles provide instant **-1.8°C to -2.5°C** evaporative cooling for daily market vendors and loaders."""
     },
     {
-        "keywords": ["ambattur", "manufacturing", "auto", "factory"],
+        "keywords": ["ambattur", "manufacturing", "auto", "industrial estate"],
         "answer": """### Why Buffer Canopy Greening is Chosen for Ambattur
 
 1. **Industrial Heat Concentration**: Ambattur Industrial Estate features dense auto-component and electrical manufacturing facilities with continuous machinery waste heat.
@@ -101,19 +132,35 @@ All costs in HeatScape are derived from **Greater Chennai Corporation (GCC)** sc
 3. **Evaporative Canopy Belts**: Planting high-canopy native species (Neem, Pungai, Casuarina) provides dense shade, groundwater absorption, and over 350 liters of daily evapotranspiration per tree."""
     },
     {
-        "keywords": ["knapsack", "optimizer", "greedy", "algorithm", "roi", "formula", "allocation"],
-        "answer": """### How the Municipal Budget Optimizer Works
+        "keywords": ["teynampet", "anna salai", "commercial corridor", "cbd"],
+        "answer": """### Why Cool Pavements & Living Facades are Chosen for Teynampet
 
-HeatScape uses a **Greedy 0/1 Knapsack Algorithm** tailored for city engineers:
-
-1. **ROI Priority Formula**:
-   $$\\text{ROI Priority Score} = \\frac{\\text{Heat Score} \\times \\Delta T_{\\text{cooling impact}} \\times 100{,}000}{\\text{Implementation Cost (INR)}}$$
-2. **Ranking**: All hotspot cells in the target zone (or all zones) are sorted descending by their ROI Priority Score.
-3. **Integer Allocation**: The algorithm commits funding to full, discrete intervention packages (e.g. ₹75,000 for 500m² cool roof) one by one until the user's budget ceiling is reached.
-4. **Output Metrics**: Returns the exact list of treated hotspots, total money spent, remaining unspent budget, and projected city-wide temperature reduction."""
+1. **High-Rise Urban Canyon**: Teynampet spans the central Anna Salai business district, where glass facades and concrete high-rises trap reflected solar radiation between buildings.
+2. **Pedestrian Transit Exposure**: Thousands of transit users commute between metro stations and office buildings across exposed sidewalks.
+3. **Microclimate Relief**: Solar-reflective pavement coatings (SRI > 70) and vertical living green walls mitigate radiant heat buildup at the pedestrian breathing zone."""
     },
     {
-        "keywords": ["tier 1", "tier 2", "difference", "compare"],
+        "keywords": ["perungudi", "omr", "marshland", "landfill", "it park"],
+        "answer": """### Why Bioswales & Sedum Roofs are Chosen for Perungudi
+
+1. **Landfill & IT Corridor Friction**: Perungudi adjoins the Pallikaranai marshland, the municipal solid waste dump, and the dense OMR technology corridor.
+2. **Micro-Heat Dome**: Waste decomposition and vast glass/concrete tech parks generate an intense microclimate thermal pocket.
+3. **Water-Buffer Harmony**: Bioswales with salt-tolerant wetland flora filter runoff while biosolar green roofs dramatically curb HVAC energy demands."""
+    },
+    {
+        "keywords": ["knapsack", "optimizer", "optimise", "optimis", "greedy", "algorithm", "roi", "formula", "allocation", "budget optimize", "budget optimise", "budget calculation"],
+        "answer": """### How the Municipal Budget Optimizer Works
+
+HeatScape implements a **Greedy 0/1 Knapsack Optimization Algorithm** designed for city finance directors and civil engineers:
+
+1. **ROI Priority Score Formula**:
+   $$\\text{ROI Priority Score} = \\frac{\\text{Heat Score} \\times \\Delta T_{\\text{cooling impact}} \\times 100{,}000}{\\text{Implementation Cost (INR)}}$$
+2. **Zone or Citywide Scope**: The user can run optimization across a single zone (e.g. Manali only) or all 7 zones simultaneously.
+3. **Discrete Integer Allocation**: Rather than splitting arbitrary funds, the algorithm funds whole, actionable packages (e.g. ₹1,00,000 for 50 trees, ₹75,000 for 500m² cool roofs) strictly in descending order of ROI.
+4. **Transparent Output**: Displays total budget allocated, remaining surplus/unspent funds, number of treated hotspots, and projected city-wide temperature reduction."""
+    },
+    {
+        "keywords": ["tier 1", "tier 2", "difference", "compare", "distinction"],
         "answer": """### Difference Between Tier 1 and Tier 2 Interventions
 
 | Dimension | Tier 1 (Municipal Blueprint) | Tier 2 (Gemini AI Suggestions) |
@@ -125,7 +172,7 @@ HeatScape uses a **Greedy 0/1 Knapsack Algorithm** tailored for city engineers:
 | **Verification** | 100% verified by GCC & ICAP | Exploratory / estimated |"""
     },
     {
-        "keywords": ["250m", "grid", "resolution", "scale", "why not ward"],
+        "keywords": ["250m", "grid", "resolution", "scale", "why not ward", "micro-grid"],
         "answer": """### Why HeatScape Uses a 250m x 250m Micro-Grid
 
 1. **Ward Averages are Too Coarse**: A municipal ward averages 3–8 km². An asphalt parking lot or warehouse cluster inside an otherwise leafy ward gets smoothed out and ignored by ward-level statistics.
@@ -135,12 +182,34 @@ HeatScape uses a **Greedy 0/1 Knapsack Algorithm** tailored for city engineers:
 ]
 
 def search_fallback_knowledge(query: str) -> Optional[str]:
-    """Matches user doubt against verified platform knowledge base."""
-    q = query.lower()
+    """
+    Intelligently matches user doubt against verified platform knowledge base
+    using scored phrase and keyword matching.
+    """
+    q = (query or "").lower().strip()
+    if not q:
+        return None
+
+    best_match = None
+    highest_score = 0
+
     for item in KNOWLEDGE_BASE:
-        if any(k in q for k in item["keywords"]):
-            return item["answer"]
-    return None
+        score = 0
+        for kw in item["keywords"]:
+            if kw in q:
+                # Longer, multi-word matching phrases score much higher
+                score += len(kw.split()) * 10
+            else:
+                # Check individual tokens
+                tokens = kw.split()
+                if len(tokens) > 1 and all(t in q for t in tokens):
+                    score += 5
+
+        if score > highest_score:
+            highest_score = score
+            best_match = item["answer"]
+
+    return best_match if highest_score > 0 else None
 
 def answer_doubt(
     query: str,
