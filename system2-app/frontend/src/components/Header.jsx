@@ -12,19 +12,27 @@ export default function Header({
   loading
 }) {
   return (
-    <header className="glass-panel" style={{ margin: '16px 20px', padding: '14px 24px' }}>
+    <header className="glass-panel" style={{
+      margin: '16px 20px',
+      padding: '14px 24px',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      borderRadius: '16px',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)'
+    }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         {/* Brand & Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '10px',
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
             background: 'linear-gradient(135deg, #ef4444, #f59e0b)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 16px rgba(239, 68, 68, 0.4)'
+            boxShadow: '0 0 20px rgba(239, 68, 68, 0.45)',
+            border: '1px solid rgba(255, 255, 255, 0.15)'
           }}>
             <Flame size={24} color="#fff" />
           </div>
@@ -33,19 +41,37 @@ export default function Header({
               <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: '800', letterSpacing: '-0.5px' }}>
                 Heat<span style={{ color: '#ef4444' }}>Scape</span>
               </h1>
-              <span className="glass-pill" style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', color: '#10b981', fontWeight: '600' }}>
+              <span className="glass-pill" style={{
+                fontSize: '11px',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                color: '#10b981',
+                fontWeight: '700',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }} />
                 System 2 • Live
               </span>
             </div>
             <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-              Chennai Urban Heat Island Platform • PS 13
+              Chennai Urban Heat Island Intelligence Platform • PS 13
             </p>
           </div>
         </div>
 
         {/* Zone Filter & Action Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          <div className="glass-pill" style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '8px' }}>
+          {/* Zone Selector Pill */}
+          <div className="glass-pill" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '7px 14px',
+            borderRadius: '10px',
+            border: '1px solid rgba(255, 255, 255, 0.12)'
+          }}>
             <MapPin size={15} color="var(--accent-amber)" />
             <select
               value={selectedZone}
@@ -56,7 +82,7 @@ export default function Header({
                 color: 'var(--text-primary)',
                 fontFamily: 'inherit',
                 fontSize: '13px',
-                fontWeight: '500',
+                fontWeight: '600',
                 outline: 'none',
                 cursor: 'pointer'
               }}
@@ -77,14 +103,15 @@ export default function Header({
               background: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               color: 'var(--text-primary)',
-              borderRadius: '8px',
-              padding: '8px 12px',
+              borderRadius: '10px',
+              padding: '8px 14px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
               fontSize: '13px',
-              transition: 'all 0.2s'
+              fontWeight: '500',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           >
             <RefreshCw size={14} className={loading ? 'spinning' : ''} />
@@ -96,18 +123,18 @@ export default function Header({
             onClick={onOpenBudgetModal}
             style={{
               background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
-              border: 'none',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
               color: '#fff',
-              borderRadius: '8px',
-              padding: '8px 16px',
+              borderRadius: '10px',
+              padding: '8px 18px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
               fontSize: '13px',
-              fontWeight: '600',
+              fontWeight: '700',
               boxShadow: 'var(--shadow-glow-purple)',
-              transition: 'transform 0.15s ease'
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           >
             <Calculator size={15} />

@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, ShieldCheck, Sparkles, Thermometer, DollarSign, ArrowDownRight, Layers, Info, CheckCircle2 } from 'lucide-react';
+import {
+  X,
+  ShieldCheck,
+  Sparkles,
+  Thermometer,
+  DollarSign,
+  ArrowDownRight,
+  ChevronDown,
+  ChevronUp,
+  Info,
+  CheckCircle2,
+  Minimize2,
+  Maximize2
+} from 'lucide-react';
 import { ENDPOINTS } from '../config/api';
 
 export default function DetailPanel({ hotspot, onClose }) {
   const [tier2Data, setTier2Data] = useState(null);
   const [loadingTier2, setLoadingTier2] = useState(false);
   const [tier2Error, setTier2Error] = useState(null);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   // Fetch Tier 2 on-demand ONLY when the hotspot is selected / opened
   useEffect(() => {
@@ -26,7 +40,7 @@ export default function DetailPanel({ hotspot, onClose }) {
       })
       .catch(err => {
         if (isMounted) {
-          setTier2Error('Failed to fetch AI recommendations. Please check API connection.');
+          setTier2Error('Failed to fetch AI recommendations. Check API connection.');
           setLoadingTier2(false);
         }
       });
@@ -50,24 +64,109 @@ export default function DetailPanel({ hotspot, onClose }) {
 
   const badge = getHeatBadgeColor(heatScore);
 
+  const factorItems = [
+    { label: 'Surface Temperature (T)', val: factors.T_norm ?? 0, color: '#ef4444' },
+    { label: 'Vegetation Deficit (V)', val: factors.V_norm ?? 0, color: '#10b981' },
+    { label: 'Impervious Surface (I)', val: factors.I_norm ?? 0, color: '#8b5cf6' },
+    { label: 'Water Distance (W)', val: factors.W_norm ?? 0, color: '#06b6d4' },
+  ];
+
+  // Minimized docked view
+  if (isMinimized) {
+    return (
+      <div
+        className="glass-panel animate-fade-in"
+        style={{
+          position: 'fixed',
+          right: '24px',
+          bottom: '24px',
+          zIndex: 1100,
+          padding: '12px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px',
+          boxShadow: '0 12px 30px rgba(0, 0, 0, 0.7)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          borderRadius: '12px'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{
+            width: '10px',
+            height: '10px',
+            borderRadius: '50%',
+            background: badge.text,
+            boxShadow: `0 0 8px ${badge.text}`
+          }} />
+          <strong style={{ fontSize: '13px', color: '#fff' }}>{hotspot.zone}</strong>
+          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>({hotspot.cell_id})</span>
+        </div>
+
+        <div style={{ fontSize: '12px', fontWeight: '700', color: badge.text }}>
+          Score: {heatScore.toFixed(3)}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <button
+            onClick={() => setIsMinimized(false)}
+            title="Expand panel"
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: 'none',
+              color: '#fff',
+              borderRadius: '6px',
+              padding: '4px 8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: '11px'
+            }}
+          >
+            <Maximize2 size={13} />
+            <span>Expand</span>
+          </button>
+
+          <button
+            onClick={onClose}
+            title="Close"
+            style={{
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: 'none',
+              color: '#9ca3af',
+              borderRadius: '6px',
+              padding: '4px 6px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <X size={14} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
-      className="glass-panel"
+      className="glass-panel animate-slide-in"
       style={{
-        width: '450px',
+        width: '460px',
         maxWidth: '92vw',
         height: 'calc(100vh - 140px)',
         overflowY: 'auto',
         position: 'fixed',
-        right: '20px',
-        top: '110px',
-        zIndex: 1000,
+        right: '24px',
+        top: '104px',
+        zIndex: 1100,
         padding: '24px',
-        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)',
+        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.75)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '20px',
-        animation: 'slideIn 0.3s ease-out'
+        gap: '18px',
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        borderRadius: '16px'
       }}
     >
       {/* Top Header */}
@@ -75,12 +174,13 @@ export default function DetailPanel({ hotspot, onClose }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{
-              background: 'rgba(255, 255, 255, 0.1)',
+              background: 'rgba(255, 255, 255, 0.08)',
               padding: '2px 8px',
-              borderRadius: '4px',
+              borderRadius: '6px',
               fontSize: '11px',
               fontFamily: 'monospace',
-              color: '#d1d5db'
+              color: '#d1d5db',
+              border: '1px solid rgba(255, 255, 255, 0.08)'
             }}>
               {hotspot.cell_id}
             </span>
@@ -90,42 +190,67 @@ export default function DetailPanel({ hotspot, onClose }) {
             </span>
           </div>
 
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: '700', marginTop: '6px' }}>
-            Hotspot Analysis
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: '800', marginTop: '6px', letterSpacing: '-0.3px' }}>
+            Hotspot Diagnostics
           </h2>
         </div>
 
-        <button
-          onClick={onClose}
-          style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            border: 'none',
-            color: '#fff',
-            borderRadius: '50%',
-            width: '32px',
-            height: '32px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'background 0.2s'
-          }}
-        >
-          <X size={18} />
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <button
+            onClick={() => setIsMinimized(true)}
+            title="Minimize panel"
+            style={{
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: 'none',
+              color: '#9ca3af',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+          >
+            <Minimize2 size={14} />
+          </button>
+
+          <button
+            onClick={onClose}
+            title="Close panel"
+            style={{
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: 'none',
+              color: '#fff',
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+          >
+            <X size={16} />
+          </button>
+        </div>
       </div>
 
       {/* Heat Score & Contributing Factors Banner */}
       <div style={{
-        background: 'rgba(255, 255, 255, 0.03)',
+        background: 'rgba(255, 255, 255, 0.02)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '10px',
-        padding: '14px'
+        borderRadius: '12px',
+        padding: '16px'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <div>
-            <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Heat Score Index</div>
-            <div style={{ fontSize: '24px', fontWeight: '800', fontFamily: 'var(--font-heading)', color: badge.text }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Heat Score Index
+            </div>
+            <div style={{ fontSize: '26px', fontWeight: '800', fontFamily: 'var(--font-heading)', color: badge.text }}>
               {heatScore.toFixed(3)}
             </div>
           </div>
@@ -133,81 +258,92 @@ export default function DetailPanel({ hotspot, onClose }) {
             background: badge.bg,
             border: `1px solid ${badge.border}`,
             color: badge.text,
-            padding: '4px 10px',
+            padding: '4px 12px',
             borderRadius: '20px',
-            fontSize: '12px',
-            fontWeight: '700'
+            fontSize: '11px',
+            fontWeight: '700',
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase'
           }}>
             {badge.label} Severity
           </div>
         </div>
 
-        {/* Contributing Factors Micro-bars */}
-        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>
+        {/* Contributing Factors Visual Bars */}
+        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           Diagnostic Breakdown:
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '11px' }}>
-          <div>
-            <span style={{ color: 'var(--text-secondary)' }}>Temp Index (T): </span>
-            <strong>{factors.T_norm ?? 'N/A'}</strong>
-          </div>
-          <div>
-            <span style={{ color: 'var(--text-secondary)' }}>Vegetation (V): </span>
-            <strong>{factors.V_norm ?? 'N/A'}</strong>
-          </div>
-          <div>
-            <span style={{ color: 'var(--text-secondary)' }}>Impervious (I): </span>
-            <strong>{factors.I_norm ?? 'N/A'}</strong>
-          </div>
-          <div>
-            <span style={{ color: 'var(--text-secondary)' }}>Water Prox (W): </span>
-            <strong>{factors.W_norm ?? 'N/A'}</strong>
-          </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {factorItems.map((item, idx) => {
+            const pct = Math.min(100, Math.max(0, Math.round(item.val * 100)));
+            return (
+              <div key={idx}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '3px' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
+                  <span style={{ fontWeight: '700', color: '#fff' }}>{item.val} ({pct}%)</span>
+                </div>
+                <div style={{
+                  height: '5px',
+                  background: 'rgba(255, 255, 255, 0.06)',
+                  borderRadius: '3px',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    width: `${pct}%`,
+                    height: '100%',
+                    background: item.color,
+                    borderRadius: '3px',
+                    transition: 'width 0.4s ease-out'
+                  }} />
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* ========================================================
           TIER 1 SECTION — VERIFIED RECOMMENDATIONS
-          (Styled as reliable, defensible municipal core)
       ======================================================== */}
       <div style={{
         background: 'var(--bg-tier1)',
         border: '1px solid var(--border-tier1)',
-        borderRadius: '12px',
+        borderRadius: '14px',
         padding: '18px',
         position: 'relative'
       }}>
-        {/* Tier 1 Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ background: 'rgba(16, 185, 129, 0.2)', padding: '6px', borderRadius: '8px' }}>
               <ShieldCheck size={18} color="var(--accent-emerald)" />
             </div>
             <div>
-              <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--accent-emerald)', fontWeight: '700' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--accent-emerald)', fontWeight: '700' }}>
                 Tier 1 Recommendation
               </div>
-              <div style={{ fontSize: '15px', fontWeight: '700', color: '#fff' }}>
-                Verified Standardized Toolkit
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>
+                Verified Standardized Intervention
               </div>
             </div>
           </div>
           <span style={{
-            background: 'rgba(16, 185, 129, 0.2)',
+            background: 'rgba(16, 185, 129, 0.15)',
             color: 'var(--accent-emerald)',
             border: '1px solid rgba(16, 185, 129, 0.4)',
-            fontSize: '10px',
+            fontSize: '9px',
             fontWeight: '700',
             padding: '2px 8px',
-            borderRadius: '12px'
+            borderRadius: '12px',
+            letterSpacing: '0.4px'
           }}>
-            PUBLISHED RESEARCH
+            MUNICIPAL BENCHMARK
           </span>
         </div>
 
         {/* Diagnosed Cause */}
         <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-          Diagnosed Cause: <strong style={{ color: '#fff' }}>{hotspot.cause?.replace(/_/g, ' ').toUpperCase()}</strong>
+          Root Cause: <strong style={{ color: '#fff' }}>{hotspot.cause?.replace(/_/g, ' ').toUpperCase()}</strong>
         </div>
 
         {/* Recommended Intervention */}
@@ -227,7 +363,7 @@ export default function DetailPanel({ hotspot, onClose }) {
 
         {/* Cost & Impact Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+          <div style={{ background: 'rgba(0, 0, 0, 0.35)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <DollarSign size={12} color="var(--accent-emerald)" /> Standard Cost
             </div>
@@ -236,7 +372,7 @@ export default function DetailPanel({ hotspot, onClose }) {
             </div>
           </div>
 
-          <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+          <div style={{ background: 'rgba(0, 0, 0, 0.35)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <ArrowDownRight size={12} color="var(--accent-emerald)" /> Est. Cooling Impact
             </div>
@@ -254,8 +390,9 @@ export default function DetailPanel({ hotspot, onClose }) {
                 background: 'rgba(255, 255, 255, 0.05)',
                 fontSize: '10px',
                 color: '#9ca3af',
-                padding: '2px 6px',
-                borderRadius: '4px'
+                padding: '2px 8px',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.05)'
               }}>
                 ✓ {b}
               </span>
@@ -271,36 +408,33 @@ export default function DetailPanel({ hotspot, onClose }) {
 
       {/* ========================================================
           TIER 2 SECTION — AI-SUGGESTED IDEAS
-          (Clearly distinct, labeled AI-suggested, estimated,
-           mapped strictly to Tier 1 cost categories)
       ======================================================== */}
       <div style={{
         background: 'var(--bg-tier2)',
         border: '1px solid var(--border-tier2)',
-        borderRadius: '12px',
+        borderRadius: '14px',
         padding: '18px'
       }}>
-        {/* Tier 2 Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ background: 'rgba(139, 92, 246, 0.25)', padding: '6px', borderRadius: '8px' }}>
               <Sparkles size={18} color="var(--accent-purple)" />
             </div>
             <div>
-              <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--accent-purple)', fontWeight: '700' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.8px', color: 'var(--accent-purple)', fontWeight: '700' }}>
                 Tier 2 AI Suggestions
               </div>
-              <div style={{ fontSize: '15px', fontWeight: '700', color: '#fff' }}>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>
                 Gemini Pro Creative Ideas
               </div>
             </div>
           </div>
 
           <span style={{
-            background: 'rgba(139, 92, 246, 0.25)',
+            background: 'rgba(139, 92, 246, 0.2)',
             color: '#c084fc',
             border: '1px solid rgba(139, 92, 246, 0.5)',
-            fontSize: '10px',
+            fontSize: '9px',
             fontWeight: '700',
             padding: '2px 8px',
             borderRadius: '12px'
@@ -316,8 +450,8 @@ export default function DetailPanel({ hotspot, onClose }) {
         {/* Loading Skeleton */}
         {loadingTier2 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div className="skeleton" style={{ height: '70px' }} />
-            <div className="skeleton" style={{ height: '70px' }} />
+            <div className="skeleton" style={{ height: '74px' }} />
+            <div className="skeleton" style={{ height: '74px' }} />
           </div>
         )}
 
@@ -376,7 +510,7 @@ export default function DetailPanel({ hotspot, onClose }) {
                     fontSize: '11px'
                   }}>
                     <div style={{ color: '#c084fc', fontWeight: '600', marginBottom: '2px', fontSize: '10px' }}>
-                      Mapped Benchmark Category: {mc.category_name}
+                      Mapped Benchmark: {mc.category_name}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', color: '#e5e7eb', fontSize: '11px' }}>
                       <span>Unit Cost: <strong>{mc.cost_display}</strong></span>

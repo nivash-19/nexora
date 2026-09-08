@@ -128,23 +128,112 @@ body {
   z-index: -1;
 }
 
-/* Leaflet Container Overrides */
+/* Leaflet Container Overrides & Watermark Removal */
 .leaflet-container {
   background: #0d131f !important;
   font-family: var(--font-body) !important;
+}
+
+/* Completely remove watermark and attribution controls from map */
+.leaflet-control-attribution {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Modern Glassmorphic Zoom Controls */
+.leaflet-control-zoom {
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
+  margin-top: 18px !important;
+  margin-left: 18px !important;
+}
+
+.leaflet-control-zoom a {
+  background: rgba(17, 24, 39, 0.88) !important;
+  color: #f3f4f6 !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  font-size: 16px !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(31, 41, 55, 0.98) !important;
+  color: var(--accent-crimson) !important;
+  transform: scale(1.05);
 }
 
 .leaflet-popup-content-wrapper {
   background: rgba(17, 24, 39, 0.95) !important;
   color: var(--text-primary) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
-  backdrop-filter: blur(10px);
+  border-radius: 12px !important;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(14px);
 }
 
 .leaflet-popup-tip {
   background: rgba(17, 24, 39, 0.95) !important;
+}
+
+/* Tooltips */
+.leaflet-tooltip {
+  background: rgba(15, 23, 42, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #f9fafb !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  padding: 8px 14px !important;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: rgba(15, 23, 42, 0.94) !important;
+}
+
+/* Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(36px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spinSlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
 }
 
 /* Shimmer Loading Skeleton */
@@ -161,5 +250,6 @@ body {
   background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite;
-  border-radius: 6px;
+  border-radius: 8px;
 }
+

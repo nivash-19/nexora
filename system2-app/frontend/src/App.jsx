@@ -56,7 +56,7 @@ export default function App() {
       />
 
       {/* Aggregate City Metrics */}
-      <StatsBar hotspots={hotspots} />
+      <StatsBar hotspots={hotspots} selectedZone={selectedZone} />
 
       {/* Main Map & Interactive Work Area */}
       <main style={{ flex: 1, position: 'relative', margin: '0 20px 20px 20px', minHeight: '520px' }}>
