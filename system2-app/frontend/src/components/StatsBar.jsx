@@ -1,7 +1,12 @@
 import React from 'react';
 import { Sparkles, Trees, TrendingDown, ShieldCheck } from 'lucide-react';
 
-export default function StatsBar({ hotspots = [], selectedZone = 'All Zones', viewMode = 'solutions' }) {
+export default function StatsBar({
+  hotspots = [],
+  selectedZone = 'All Zones',
+  viewMode = 'solutions',
+  onSelectZone
+}) {
   if (!hotspots.length) return null;
 
   const isZoneFiltered = selectedZone && selectedZone !== 'All Zones';
@@ -27,17 +32,25 @@ export default function StatsBar({ hotspots = [], selectedZone = 'All Zones', vi
       margin: '0 20px 16px 20px'
     }}>
       {/* 1. Target Cooling Action Sites */}
-      <div className="glass-panel" style={{
-        padding: '14px 18px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '14px',
-        border: '1px solid rgba(16, 185, 129, 0.25)',
-        background: 'rgba(15, 23, 42, 0.85)',
-        borderRadius: '14px',
-        boxShadow: '0 4px 18px rgba(0, 0, 0, 0.35)',
-        transition: 'all 0.2s ease'
-      }}>
+      <div
+        className="glass-panel"
+        onClick={() => onSelectZone && onSelectZone(selectedZone)}
+        title={`Click to re-center map to ${selectedZone}`}
+        style={{
+          padding: '14px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px',
+          border: '1px solid rgba(16, 185, 129, 0.25)',
+          background: 'rgba(15, 23, 42, 0.85)',
+          borderRadius: '14px',
+          boxShadow: '0 4px 18px rgba(0, 0, 0, 0.35)',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease'
+        }}
+        onMouseOver={(e) => { e.currentTarget.style.borderColor = '#4edea3'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+        onMouseOut={(e) => { e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.25)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+      >
         <div style={{
           background: 'rgba(16, 185, 129, 0.18)',
           padding: '10px',
@@ -50,8 +63,9 @@ export default function StatsBar({ hotspots = [], selectedZone = 'All Zones', vi
           <Sparkles size={20} color="#34d399" />
         </div>
         <div>
-          <div style={{ fontSize: '11px', color: '#a7f3d0', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: '700' }}>
-            {isZoneFiltered ? `${selectedZone} Action Sites` : 'Cooling Action Sites'}
+          <div style={{ fontSize: '11px', color: '#a7f3d0', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span>{isZoneFiltered ? `${selectedZone} Action Sites` : 'Cooling Action Sites'}</span>
+            <span style={{ fontSize: '10px', color: '#4edea3' }}>🎯</span>
           </div>
           <div style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'var(--font-heading)', color: '#fff', marginTop: '2px' }}>
             {total} <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '400' }}>mapped corridors</span>

@@ -17,6 +17,10 @@ export default function App() {
   const [error, setError] = useState(null);
   const [selectedZone, setSelectedZone] = useState('All Zones');
   const [selectedHotspot, setSelectedHotspot] = useState(null);
+  const [recenterRequest, setRecenterRequest] = useState(() => ({
+    zone: 'All Zones',
+    timestamp: Date.now()
+  }));
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isAdoptedModalOpen, setIsAdoptedModalOpen] = useState(false);
@@ -151,10 +155,15 @@ export default function App() {
 
   const handleSelectZone = (zone) => {
     setSelectedZone(zone);
+    // Explicit timestamp guarantee forces map to re-center even if clicking currently active zone
+    setRecenterRequest({ zone, timestamp: Date.now() });
+
     if (zone && zone.toLowerCase() !== 'all zones') {
       const matching = hotspots.filter(h => (h.zone || '').toLowerCase() === zone.toLowerCase());
       if (matching.length > 0) {
-        setSelectedHotspot(matching[0]);
+        if (!selectedHotspot || (selectedHotspot.zone || '').toLowerCase() !== zone.toLowerCase()) {
+          setSelectedHotspot(matching[0]);
+        }
       }
     }
   };
@@ -177,7 +186,12 @@ export default function App() {
       />
 
       {/* Aggregate City Metrics */}
-      <StatsBar hotspots={hotspots} selectedZone={selectedZone} viewMode={viewMode} />
+      <StatsBar
+        hotspots={hotspots}
+        selectedZone={selectedZone}
+        viewMode={viewMode}
+        onSelectZone={handleSelectZone}
+      />
 
       {/* Main Map & Interactive Work Area */}
       <main style={{ flex: 1, position: 'relative', margin: '0 20px 20px 20px', minHeight: '520px' }}>
@@ -256,6 +270,8 @@ export default function App() {
           viewMode={viewMode}
           adoptedHotspots={adoptedHotspots}
           selectedZone={selectedZone}
+          recenterRequest={recenterRequest}
+          onSelectZone={handleSelectZone}
         />
 
         {/* Map Legend Overlay */}
@@ -268,6 +284,7 @@ export default function App() {
             onClose={() => setSelectedHotspot(null)}
             adoptedHotspots={adoptedHotspots}
             onToggleAdopt={handleToggleAdopt}
+            onSelectZone={handleSelectZone}
           />
         )}
       </main>

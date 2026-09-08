@@ -26,7 +26,8 @@ export default function DetailPanel({
   hotspot,
   onClose,
   adoptedHotspots = {},
-  onToggleAdopt
+  onToggleAdopt,
+  onSelectZone
 }) {
   const [tier2Data, setTier2Data] = useState(null);
   const [loadingTier2, setLoadingTier2] = useState(false);
@@ -227,9 +228,30 @@ export default function DetailPanel({
               {hotspot.cell_id}
             </span>
             <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>•</span>
-            <span style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>
-              {hotspot.zone}, Chennai
-            </span>
+            <button
+              onClick={() => onSelectZone && onSelectZone(hotspot.zone)}
+              title={`Click to re-center map to ${hotspot.zone} region`}
+              style={{
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '6px',
+                padding: '2px 8px',
+                fontSize: '12.5px',
+                fontWeight: '700',
+                color: '#4edea3',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(78, 222, 163, 0.2)'; e.currentTarget.style.borderColor = '#4edea3'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)'; }}
+            >
+              <MapPin size={12} color="#4edea3" />
+              <span>{hotspot.zone}, Chennai</span>
+              <span style={{ fontSize: '10px', color: '#bbcabf', marginLeft: '2px' }}>🎯 Center</span>
+            </button>
           </div>
 
           <h2 style={{

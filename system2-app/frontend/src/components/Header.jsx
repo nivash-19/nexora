@@ -203,6 +203,7 @@ export default function Header({
               <button
                 key={zone.id}
                 onClick={() => onSelectZone(zone.id)}
+                title={`Click to re-center map to ${zone.label}`}
                 style={{
                   background: isSelected
                     ? (zone.id === 'Manali' ? 'rgba(147, 0, 10, 0.85)' : '#262a35')

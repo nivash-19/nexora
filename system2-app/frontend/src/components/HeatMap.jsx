@@ -1,37 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from 'react-leaflet';
-import { Wind, Trees, Flame, Compass, CheckCircle2, Radio, Layers } from 'lucide-react';
+import L from 'leaflet';
+import { Wind, Trees, Flame, Compass, CheckCircle2, Radio, Layers, Crosshair, MapPin } from 'lucide-react';
 
 // Pre-calculated centroid coordinates and zoom levels for Chennai regions
 const ZONE_CENTROIDS = {
-  'Manali': { center: [13.1678, 80.2610], zoom: 13.5 },
-  'Ambattur': { center: [13.1146, 80.1551], zoom: 13.5 },
-  'Anna Nagar': { center: [13.0872, 80.2133], zoom: 14 },
-  'Koyambedu': { center: [13.0689, 80.1947], zoom: 14 },
-  'Teynampet': { center: [13.0424, 80.2479], zoom: 14 },
-  'Perungudi': { center: [12.9662, 80.2469], zoom: 13.5 },
+  'Manali': { center: [13.1678, 80.2612], zoom: 13.5 },
+  'Ambattur': { center: [13.1124, 80.1582], zoom: 13.5 },
+  'Anna Nagar': { center: [13.0872, 80.2133], zoom: 13.8 },
+  'Koyambedu': { center: [13.0692, 80.1944], zoom: 14 },
+  'Teynampet': { center: [13.0425, 80.2482], zoom: 14 },
+  'Perungudi': { center: [12.9682, 80.2455], zoom: 13.5 },
   'Royapuram': { center: [13.1130, 80.2950], zoom: 14 },
   'All Zones': { center: [13.0827, 80.2407], zoom: 11 },
 };
 
-// Smooth map fly-to controller with region re-centering
-function MapController({ selectedHotspot, selectedZone, hotspots = [] }) {
+// Smooth map fly-to controller with region re-centering and bounds fitting
+function MapController({ selectedHotspot, selectedZone, recenterRequest, allHotspots = [], hotspots = [] }) {
   const map = useMap();
+  const isRegionFlyingRef = useRef(false);
 
-  // Re-center whenever the selected region/zone changes
+  // Re-center whenever the selected region/zone changes or an explicit recenter is requested
   useEffect(() => {
     if (!selectedZone) return;
+
+    // Lock single-hotspot zoom during region transition so it doesn't overwrite region framing
+    isRegionFlyingRef.current = true;
+    const unlockTimer = setTimeout(() => {
+      isRegionFlyingRef.current = false;
+    }, 1200);
 
     if (selectedZone.toLowerCase() === 'all zones') {
       map.flyTo([13.0827, 80.2407], 11, {
         animate: true,
         duration: 0.9,
       });
-      return;
+      return () => clearTimeout(unlockTimer);
     }
 
-    // Try finding exact centroid from matching hotspots
-    const zoneHotspots = hotspots.filter(
+    // Identify hotspots for this zone
+    const pool = allHotspots && allHotspots.length > 0 ? allHotspots : hotspots;
+    const zoneHotspots = pool.filter(
       h => (h.zone || '').toLowerCase() === selectedZone.toLowerCase()
     );
 
@@ -40,18 +49,25 @@ function MapController({ selectedHotspot, selectedZone, hotspots = [] }) {
         .map(h => [parseFloat(h.lat), parseFloat(h.lon)])
         .filter(c => !isNaN(c[0]) && !isNaN(c[1]));
 
-      if (validCoords.length > 0) {
-        const avgLat = validCoords.reduce((sum, c) => sum + c[0], 0) / validCoords.length;
-        const avgLon = validCoords.reduce((sum, c) => sum + c[1], 0) / validCoords.length;
-        map.flyTo([avgLat, avgLon], 13.5, {
+      if (validCoords.length >= 2) {
+        // Frame all hotspots in this region using bounding box
+        const bounds = L.latLngBounds(validCoords);
+        map.fitBounds(bounds.pad(0.38), {
+          animate: true,
+          duration: 1.0,
+          maxZoom: 14,
+        });
+        return () => clearTimeout(unlockTimer);
+      } else if (validCoords.length === 1) {
+        map.flyTo(validCoords[0], 13.8, {
           animate: true,
           duration: 0.9,
         });
-        return;
+        return () => clearTimeout(unlockTimer);
       }
     }
 
-    // Fallback to static zone coordinates
+    // Fallback to static zone centroid
     const matchedKey = Object.keys(ZONE_CENTROIDS).find(
       k => k.toLowerCase() === selectedZone.toLowerCase()
     );
@@ -62,10 +78,15 @@ function MapController({ selectedHotspot, selectedZone, hotspots = [] }) {
         duration: 0.9,
       });
     }
-  }, [selectedZone, map]);
 
-  // Re-center when an individual hotspot is selected
+    return () => clearTimeout(unlockTimer);
+  }, [selectedZone, recenterRequest, map]);
+
+  // Re-center when an individual hotspot is selected by clicking its marker
   useEffect(() => {
+    // If currently flying to a region, do not override
+    if (isRegionFlyingRef.current) return;
+
     if (selectedHotspot && selectedHotspot.lat && selectedHotspot.lon) {
       const lat = parseFloat(selectedHotspot.lat);
       const lon = parseFloat(selectedHotspot.lon);
@@ -108,11 +129,14 @@ const BASEMAP_TILES = {
 
 export default function HeatMap({
   hotspots = [],
+  allHotspots = [],
   selectedHotspot,
   onSelectHotspot,
   viewMode = 'solutions', // 'solutions' (Optimistic Blueprint) or 'baseline' (Current Heat)
   adoptedHotspots = {},
-  selectedZone = 'All Zones'
+  selectedZone = 'All Zones',
+  recenterRequest,
+  onSelectZone
 }) {
   const [basemap, setBasemap] = useState('dark');
   const [activeTelemetryLayer, setActiveTelemetryLayer] = useState('diff'); // 'diff' | 'tirs' | 'ndvi'
@@ -243,7 +267,34 @@ export default function HeatMap({
           </div>
 
           {/* Right Map Controls: Calibration Badge + Basemap Switcher */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            {/* Quick Re-center Region Button */}
+            <button
+              onClick={() => onSelectZone && onSelectZone(selectedZone)}
+              title={`Click to re-center map to ${selectedZone}`}
+              style={{
+                background: 'rgba(10, 14, 24, 0.9)',
+                border: '1px solid rgba(78, 222, 163, 0.5)',
+                color: '#4edea3',
+                padding: '5px 11px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                backdropFilter: 'blur(12px)',
+                transition: 'all 0.15s ease',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.4)'
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(78, 222, 163, 0.2)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(10, 14, 24, 0.9)'; }}
+            >
+              <Crosshair size={13} color="#4edea3" />
+              <span className="font-mono">Center: {selectedZone}</span>
+            </button>
+
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -308,6 +359,8 @@ export default function HeatMap({
           <MapController
             selectedHotspot={selectedHotspot}
             selectedZone={selectedZone}
+            recenterRequest={recenterRequest}
+            allHotspots={allHotspots}
             hotspots={hotspots}
           />
 
@@ -493,8 +546,29 @@ export default function HeatMap({
             <span className="font-mono" style={{ fontSize: '11px', color: '#dfe2f1', fontWeight: '600' }}>
               INSPECTING HOTSPOT:
             </span>
-            <span className="font-mono" style={{ fontSize: '11px', color: '#ffb3ad', fontWeight: '700' }}>
-              {activeName}
+            <span
+              onClick={() => onSelectZone && onSelectZone(selectedHotspot?.zone || selectedZone)}
+              title={`Click to re-center map to ${selectedHotspot?.zone || selectedZone}`}
+              className="font-mono"
+              style={{
+                fontSize: '11px',
+                color: '#ffb3ad',
+                fontWeight: '700',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                background: 'rgba(255, 82, 82, 0.12)',
+                padding: '2px 7px',
+                borderRadius: '5px',
+                border: '1px solid rgba(255, 82, 82, 0.25)',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255, 82, 82, 0.25)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255, 82, 82, 0.12)'; }}
+            >
+              <MapPin size={11} color="#ffb3ad" />
+              <span>{activeName}</span>
             </span>
             <span className="font-mono" style={{ fontSize: '11px', color: '#86948a' }}>|</span>
             <span className="font-mono" style={{ fontSize: '11px', color: '#bbcabf' }}>
