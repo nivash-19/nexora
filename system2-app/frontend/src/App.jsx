@@ -15,6 +15,7 @@ export default function App() {
   const [selectedZone, setSelectedZone] = useState('All Zones');
   const [selectedHotspot, setSelectedHotspot] = useState(null);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState('solutions'); // 'solutions' (Optimistic Blueprint) or 'baseline'
 
   const fetchHotspots = () => {
     setLoading(true);
@@ -53,10 +54,12 @@ export default function App() {
         hotspotCount={filteredHotspots.length}
         onRefresh={fetchHotspots}
         loading={loading}
+        viewMode={viewMode}
+        onToggleViewMode={setViewMode}
       />
 
       {/* Aggregate City Metrics */}
-      <StatsBar hotspots={hotspots} selectedZone={selectedZone} />
+      <StatsBar hotspots={hotspots} selectedZone={selectedZone} viewMode={viewMode} />
 
       {/* Main Map & Interactive Work Area */}
       <main style={{ flex: 1, position: 'relative', margin: '0 20px 20px 20px', minHeight: '520px' }}>
@@ -111,10 +114,11 @@ export default function App() {
           hotspots={filteredHotspots}
           selectedHotspot={selectedHotspot}
           onSelectHotspot={(h) => setSelectedHotspot(h)}
+          viewMode={viewMode}
         />
 
         {/* Map Legend Overlay */}
-        <Legend />
+        <Legend viewMode={viewMode} />
 
         {/* Detail Panel Drawer */}
         {selectedHotspot && (

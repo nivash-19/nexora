@@ -22,6 +22,8 @@
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --shadow-glow-red: 0 0 25px rgba(239, 68, 68, 0.4);
   --shadow-glow-purple: 0 0 25px rgba(139, 92, 246, 0.3);
+  --shadow-glow-emerald: 0 0 25px rgba(16, 185, 129, 0.45);
+  --accent-mint: #34d399;
 }
 
 * {

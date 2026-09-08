@@ -40,7 +40,9 @@ def test_get_hotspots():
         assert "cost_display" in t1
         assert "impact_display" in t1
         assert "intervention" in t1
-    print(f"PASS: /api/hotspots verified for {len(hotspots)} items with Tier 1")
+        assert "area_justification" in t1
+        assert "why_it_solves" in t1["area_justification"]
+    print(f"PASS: /api/hotspots verified for {len(hotspots)} items with Tier 1 and area justification")
 
 def test_get_hotspots_zone_filter():
     raw = load_hotspots_raw()
