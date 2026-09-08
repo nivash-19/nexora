@@ -277,10 +277,10 @@ export default function Header({
             </button>
           </div>
 
-          {/* AI Copilot Button */}
+          {/* Nexora Cooling Pilot Button */}
           <button
             onClick={onOpenChatbot}
-            title="Ask AI Copilot doubts about cooling solutions"
+            title="Ask Nexora Cooling Pilot doubts about cooling solutions"
             style={{
               background: 'linear-gradient(135deg, rgba(76, 215, 246, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%)',
               border: '1px solid rgba(76, 215, 246, 0.45)',
@@ -301,7 +301,7 @@ export default function Header({
             onMouseOut={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(76, 215, 246, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%)'; e.currentTarget.style.color = '#4cd7f6'; }}
           >
             <Sparkles size={14} />
-            <span>AI Copilot</span>
+            <span>Nexora Cooling Pilot</span>
           </button>
 
           {/* Budget Optimizer Button */}

@@ -13,7 +13,7 @@ from typing import List, Dict, Any, Optional
 from tier1 import TIER1_LOOKUP, ZONE_CAUSE_JUSTIFICATIONS
 from data_loader import load_hotspots_raw
 
-SYSTEM_PROMPT = """You are the HeatScape AI Copilot, an expert urban climatologist, municipal civil engineer, and policy consultant for the Greater Chennai Corporation (GCC) and Tamil Nadu State Disaster Management Authority.
+SYSTEM_PROMPT = """You are the Nexora Cooling Pilot, an expert urban climatologist, municipal civil engineer, and policy consultant for the Greater Chennai Corporation (GCC) and Tamil Nadu State Disaster Management Authority.
 
 You have deep technical knowledge of the HeatScape Nexora platform:
 1. SATELLITE & SENSOR DATA:
@@ -261,7 +261,7 @@ Currently Selected Cell Context:
 
             # Build messages conversation history
             messages = [{"role": "user", "parts": [SYSTEM_PROMPT + cell_context_str]}]
-            messages.append({"role": "model", "parts": ["Understood. I am HeatScape AI Copilot, ready to answer questions about Chennai cooling interventions, municipal benchmarks, and optimization math."]})
+            messages.append({"role": "model", "parts": ["Understood. I am Nexora Cooling Pilot, ready to answer questions about Chennai cooling interventions, municipal benchmarks, and optimization math."]})
 
             if history:
                 for h in history[-6:]: # Keep last 6 exchanges for context
@@ -319,7 +319,7 @@ Currently Selected Cell Context:
 
     # General Fallback response
     return {
-        "answer": f"""### HeatScape Urban Cooling Copilot
+        "answer": f"""### Nexora Cooling Pilot
 
 Regarding your query: **"{clean_query}"**
 

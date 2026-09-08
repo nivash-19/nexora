@@ -36,8 +36,8 @@ export default function ChatbotModal({
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Hello! I'm your **HeatScape AI Copilot**. Ask me any doubt about Chennai urban heat solutions, Tier 1 municipal costs, localized engineering justifications, or our Greedy Knapsack budget allocation math.",
-      source: "HeatScape Intelligence"
+      content: "Hello! I'm your **Nexora Cooling Pilot**. Ask me any doubt about Chennai urban heat solutions, Tier 1 municipal costs, localized engineering justifications, or our Greedy Knapsack budget allocation math.",
+      source: "Nexora Cooling Pilot"
     }
   ]);
   const [input, setInput] = useState('');
@@ -225,7 +225,7 @@ export default function ChatbotModal({
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Sparkles size={16} color="#4cd7f6" />
           <span className="font-headline" style={{ fontSize: '13px', fontWeight: '700', color: '#fff' }}>
-            AI Cooling Copilot
+            Nexora Cooling Pilot
           </span>
         </div>
         <button
@@ -304,7 +304,7 @@ export default function ChatbotModal({
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span className="font-headline" style={{ fontSize: '15px', fontWeight: '800', color: '#fff' }}>
-                AI Cooling Copilot
+                Nexora Cooling Pilot
               </span>
               <span className="font-mono" style={{
                 fontSize: '9.5px',
@@ -509,7 +509,7 @@ export default function ChatbotModal({
                 padding: '0 4px'
               }}>
                 {isUser ? <User size={10} /> : <Bot size={10} />}
-                <span className="font-mono">{isUser ? 'You' : (msg.source || 'AI Copilot')}</span>
+                <span className="font-mono">{isUser ? 'You' : (msg.source || 'Nexora Cooling Pilot')}</span>
               </div>
 
               {/* Message Bubble */}

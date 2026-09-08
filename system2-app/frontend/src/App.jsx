@@ -386,12 +386,12 @@ export default function App() {
         </div>
       )}
 
-      {/* Floating Small Icon Button for AI Copilot (when chat is closed) */}
+      {/* Floating Small Icon Button for Nexora Cooling Pilot (when chat is closed) */}
       {!isChatbotOpen && (
         <button
           onClick={() => setIsChatbotOpen(true)}
-          title="Ask AI Copilot doubts about cooling solutions"
-          aria-label="Open AI Copilot Chatbot"
+          title="Ask Nexora Cooling Pilot doubts about cooling solutions"
+          aria-label="Open Nexora Cooling Pilot Chatbot"
           style={{
             position: 'fixed',
             left: '24px',
