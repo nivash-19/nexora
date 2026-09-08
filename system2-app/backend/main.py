@@ -8,11 +8,15 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from tier1 import attach_tier1
 from tier2 import generate_tier2_recommendations
 from data_loader import load_hotspots_raw, get_data_source_status
 from optimizer import optimize_budget_allocation
+from chatbot import answer_doubt
 
 app = FastAPI(
     title="HeatScape API — System 2",
@@ -32,6 +36,16 @@ app.add_middleware(
 class BudgetRequest(BaseModel):
     budget: float = Field(..., description="Total budget in INR (e.g. 500000)", example=500000)
     zone: Optional[str] = Field(None, description="Optional Chennai zone name filter (e.g. 'Manali')")
+
+class ChatMessage(BaseModel):
+    role: str = Field(..., description="'user' or 'assistant'")
+    content: str = Field(..., description="Message text")
+
+class ChatRequest(BaseModel):
+    message: str = Field(..., description="User question or doubt regarding cooling solutions")
+    history: Optional[List[ChatMessage]] = Field(default_factory=list, description="Past conversation history")
+    context_cell_id: Optional[str] = Field(None, description="Optional active grid cell ID for localized context")
+    api_key: Optional[str] = Field(None, description="Optional Gemini API key override")
 
 @app.get("/")
 def root():
@@ -127,6 +141,21 @@ def optimize_budget_endpoint(req: BudgetRequest):
         hotspots=enriched,
         total_budget=req.budget,
         zone=req.zone
+    )
+
+@app.post("/api/chat")
+def chat_endpoint(req: ChatRequest):
+    """
+    Interactive AI Chatbot endpoint for answering doubts about urban heat solutions,
+    Tier 1 municipal costs, localized zone justifications, and knapsack budget optimization.
+    Powered by Google Gemini with authoritative local knowledge fallback.
+    """
+    history_dicts = [{"role": h.role, "content": h.content} for h in req.history] if req.history else []
+    return answer_doubt(
+        query=req.message,
+        history=history_dicts,
+        context_cell_id=req.context_cell_id,
+        api_key_override=req.api_key
     )
 
 if __name__ == "__main__":

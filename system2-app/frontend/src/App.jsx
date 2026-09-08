@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Sparkles } from 'lucide-react';
 import Header from './components/Header';
 import StatsBar from './components/StatsBar';
 import HeatMap from './components/HeatMap';
 import DetailPanel from './components/DetailPanel';
 import BudgetModal from './components/BudgetModal';
+import ChatbotModal from './components/ChatbotModal';
 import Legend from './components/Legend';
 import { ENDPOINTS } from './config/api';
 
@@ -15,6 +17,7 @@ export default function App() {
   const [selectedZone, setSelectedZone] = useState('All Zones');
   const [selectedHotspot, setSelectedHotspot] = useState(null);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [viewMode, setViewMode] = useState('solutions'); // 'solutions' (Optimistic Blueprint) or 'baseline'
 
   const fetchHotspots = (retryCount = 0) => {
@@ -61,6 +64,7 @@ export default function App() {
         selectedZone={selectedZone}
         onSelectZone={setSelectedZone}
         onOpenBudgetModal={() => setIsBudgetModalOpen(true)}
+        onOpenChatbot={() => setIsChatbotOpen(true)}
         hotspotCount={filteredHotspots.length}
         onRefresh={fetchHotspots}
         loading={loading}
@@ -164,6 +168,48 @@ export default function App() {
         isOpen={isBudgetModalOpen}
         onClose={() => setIsBudgetModalOpen(false)}
         defaultZone={selectedZone}
+      />
+
+      {/* Floating Action Button for AI Copilot (when chat is closed) */}
+      {!isChatbotOpen && (
+        <button
+          onClick={() => setIsChatbotOpen(true)}
+          title="Ask AI Copilot doubts about cooling solutions"
+          className="animate-fade-in"
+          style={{
+            position: 'fixed',
+            left: '24px',
+            bottom: '24px',
+            zIndex: 1150,
+            background: 'linear-gradient(135deg, #10b981 0%, #00b2d0 100%)',
+            color: '#003824',
+            border: '1px solid rgba(255, 255, 255, 0.35)',
+            borderRadius: '9999px',
+            padding: '11px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 8px 30px rgba(16, 185, 129, 0.45)',
+            fontFamily: 'var(--font-headline)',
+            fontSize: '13px',
+            fontWeight: '800',
+            letterSpacing: '0.02em',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
+          onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+        >
+          <Sparkles size={16} color="#003824" />
+          <span>Ask AI Copilot</span>
+        </button>
+      )}
+
+      {/* AI Chatbot Doubt Resolution Modal */}
+      <ChatbotModal
+        isOpen={isChatbotOpen}
+        onClose={() => setIsChatbotOpen(false)}
+        selectedHotspot={selectedHotspot}
       />
     </div>
   );

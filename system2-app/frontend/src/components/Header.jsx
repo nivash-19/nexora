@@ -15,6 +15,7 @@ export default function Header({
   selectedZone,
   onSelectZone,
   onOpenBudgetModal,
+  onOpenChatbot,
   hotspotCount,
   onRefresh,
   loading,
@@ -316,6 +317,33 @@ export default function Header({
               <span>🌱 Simulated Future</span>
             </button>
           </div>
+
+          {/* AI Copilot Button */}
+          <button
+            onClick={onOpenChatbot}
+            title="Ask AI Copilot doubts about cooling solutions"
+            style={{
+              background: 'linear-gradient(135deg, rgba(76, 215, 246, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%)',
+              border: '1px solid rgba(76, 215, 246, 0.45)',
+              color: '#4cd7f6',
+              borderRadius: '8px',
+              padding: '6px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: '700',
+              fontFamily: 'var(--font-headline)',
+              boxShadow: '0 0 12px rgba(76, 215, 246, 0.2)',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(76, 215, 246, 0.4)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(76, 215, 246, 0.25) 0%, rgba(139, 92, 246, 0.25) 100%)'; e.currentTarget.style.color = '#4cd7f6'; }}
+          >
+            <Sparkles size={14} />
+            <span>AI Copilot</span>
+          </button>
 
           {/* Budget Optimizer Button */}
           <button

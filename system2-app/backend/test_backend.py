@@ -103,6 +103,17 @@ def test_optimize_budget():
     assert len(result["allocations"]) == result["hotspots_treated_count"]
     print(f"PASS: /api/optimize-budget allocated INR {result['total_allocated']:,} across {result['hotspots_treated_count']} hotspots")
 
+def test_chat_endpoint():
+    payload = {"message": "Why are green roofs recommended for Manali?"}
+    response = client.post("/api/chat", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "answer" in data
+    assert len(data["answer"]) > 20
+    assert "source" in data
+    assert "suggested_followups" in data
+    print(f"PASS: /api/chat answered query successfully (source: {data['source']})")
+
 if __name__ == "__main__":
     print("\n--- RUNNING BACKEND TESTS ---")
     test_root()
@@ -113,4 +124,6 @@ if __name__ == "__main__":
     test_get_single_grid_cell_404()
     test_get_tier2_recommendations()
     test_optimize_budget()
+    test_chat_endpoint()
     print("\n>>> ALL BACKEND TESTS PASSED! <<<\n")
+

@@ -8,5 +8,7 @@ export const ENDPOINTS = {
   GRID_CELL: (id) => `${API_BASE_URL}/api/grid/${id}`,
   TIER2_AI: (id) => `${API_BASE_URL}/api/tier2/${id}`,
   OPTIMIZE_BUDGET: `${API_BASE_URL}/api/optimize-budget`,
+  CHAT: `${API_BASE_URL}/api/chat`,
   HEALTH: `${API_BASE_URL}/api/health`,
 };
+
