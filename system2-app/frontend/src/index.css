@@ -1,29 +1,64 @@
 :root {
-  --bg-primary: #0b0f19;
-  --bg-secondary: #111827;
-  --bg-card: rgba(17, 24, 39, 0.85);
-  --bg-card-hover: rgba(31, 41, 55, 0.9);
-  --bg-tier1: rgba(16, 185, 129, 0.08);
-  --border-tier1: rgba(16, 185, 129, 0.3);
-  --bg-tier2: rgba(139, 92, 246, 0.08);
-  --border-tier2: rgba(139, 92, 246, 0.3);
+  /* Stitch Tactical Palette */
+  --surface-container-lowest: #0a0e18;
+  --bg-primary: #0f131d;
+  --background: #0f131d;
+  --surface: #0f131d;
+  --surface-container-low: #171b26;
+  --surface-container: #1c1f2a;
+  --surface-container-high: #262a35;
+  --surface-container-highest: #313540;
+  --surface-bright: #353944;
 
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --primary: #4edea3;
+  --primary-container: #10b981;
+  --primary-fixed: #6ffbbe;
+  --on-primary: #003824;
+  --on-primary-container: #00422b;
 
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-crimson: #ef4444;
-  --accent-purple: #8b5cf6;
-  --accent-cyan: #06b6d4;
+  --secondary: #ffb3ad;
+  --secondary-container: #93000a;
+  --secondary-fixed-dim: #ffb3ad;
+  --on-secondary: #68000a;
+  --on-secondary-container: #ffaea8;
 
-  --font-heading: 'Outfit', sans-serif;
+  --tertiary: #4cd7f6;
+  --tertiary-container: #00b2d0;
+  --tertiary-fixed-dim: #4cd7f6;
+  --on-tertiary: #003640;
+
+  --outline: #86948a;
+  --outline-variant: #3c4a42;
+  --on-surface: #dfe2f1;
+  --on-surface-variant: #bbcabf;
+
+  /* Legacy aliases for backward compatibility */
+  --bg-secondary: #171b26;
+  --bg-card: rgba(28, 31, 42, 0.82);
+  --bg-card-hover: rgba(38, 42, 53, 0.9);
+  --bg-tier1: rgba(16, 185, 129, 0.1);
+  --border-tier1: rgba(78, 222, 163, 0.35);
+  --bg-tier2: rgba(76, 215, 246, 0.08);
+  --border-tier2: rgba(76, 215, 246, 0.3);
+  --text-primary: #dfe2f1;
+  --text-secondary: #bbcabf;
+  --text-muted: #86948a;
+
+  --accent-emerald: #4edea3;
+  --accent-mint: #4edea3;
+  --accent-amber: #ffb74d;
+  --accent-crimson: #ff5252;
+  --accent-purple: #4cd7f6;
+  --accent-cyan: #4cd7f6;
+
+  /* Stitch Typography System */
+  --font-headline: 'Space Grotesk', sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  --shadow-glow-red: 0 0 25px rgba(239, 68, 68, 0.4);
-  --shadow-glow-purple: 0 0 25px rgba(139, 92, 246, 0.3);
-  --shadow-glow-emerald: 0 0 25px rgba(16, 185, 129, 0.45);
-  --accent-mint: #34d399;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --shadow-glow-red: 0 0 25px rgba(255, 82, 82, 0.4);
+  --shadow-glow-purple: 0 0 25px rgba(76, 215, 246, 0.3);
+  --shadow-glow-emerald: 0 0 25px rgba(78, 222, 163, 0.45);
 }
 
 * {
@@ -34,11 +69,41 @@
 
 body {
   font-family: var(--font-body);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  background-color: var(--background);
+  color: var(--on-surface);
   line-height: 1.5;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Typography Utility Classes */
+.font-headline {
+  font-family: var(--font-headline) !important;
+}
+
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+.font-body {
+  font-family: var(--font-body) !important;
+}
+
+/* Material Symbols Icon Font Support */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga';
 }
 
 /* Custom Scrollbar */

@@ -1,28 +1,27 @@
 import React, { useState } from 'react';
-import { Layers, ChevronDown, ChevronUp, Sparkles, ShieldCheck } from 'lucide-react';
+import { ChevronDown, ChevronUp, Sparkles, Layers } from 'lucide-react';
 
 export default function Legend({ viewMode = 'solutions' }) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
     <div
-      className="glass-panel"
       style={{
         position: 'absolute',
-        bottom: '24px',
-        left: '24px',
+        bottom: '56px',
+        left: '20px',
         zIndex: 1000,
-        padding: collapsed ? '8px 14px' : '14px 18px',
-        maxWidth: '320px',
+        padding: collapsed ? '8px 14px' : '14px 16px',
+        width: '320px',
+        maxWidth: 'calc(100% - 40px)',
         fontSize: '12px',
-        color: 'var(--text-secondary)',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
+        border: '1px solid rgba(53, 57, 68, 0.5)',
         borderRadius: '14px',
-        boxShadow: '0 12px 35px rgba(0, 0, 0, 0.6)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        background: 'rgba(15, 23, 42, 0.88)',
-        transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
+        boxShadow: '0 12px 35px rgba(0, 0, 0, 0.75)',
+        backdropFilter: 'blur(18px)',
+        WebkitBackdropFilter: 'blur(18px)',
+        background: 'rgba(10, 14, 24, 0.92)',
+        transition: 'all 0.25s ease'
       }}
     >
       <div
@@ -32,25 +31,22 @@ export default function Legend({ viewMode = 'solutions' }) {
           alignItems: 'center',
           justifyContent: 'space-between',
           cursor: 'pointer',
-          userSelect: 'none',
-          gap: '12px'
+          userSelect: 'none'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {viewMode === 'solutions' ? (
-            <Sparkles size={14} color="#34d399" />
-          ) : (
-            <Layers size={14} color="var(--accent-amber)" />
-          )}
-          <span style={{ fontWeight: '700', color: 'var(--text-primary)', fontSize: '13px', letterSpacing: '-0.2px' }}>
-            {viewMode === 'solutions' ? 'Cooling Solutions Legend' : 'Heat Score Index'}
+          <span className="font-mono" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#86948a', fontWeight: '700' }}>
+            SURFACE ΔT DIFFERENCE SCALE
+          </span>
+          <span className="font-mono" style={{ fontSize: '10px', color: '#ffb3ad', fontWeight: '700' }}>
+            +6.8°C MAX
           </span>
         </div>
         <button
           style={{
             background: 'none',
             border: 'none',
-            color: 'var(--text-muted)',
+            color: '#86948a',
             cursor: 'pointer',
             padding: 0,
             display: 'flex'
@@ -61,71 +57,59 @@ export default function Legend({ viewMode = 'solutions' }) {
       </div>
 
       {!collapsed && (
-        <div style={{ marginTop: '12px' }}>
-          {viewMode === 'solutions' ? (
-            /* Optimistic Solutions Color Legend */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981' }} />
-                <div>
-                  <span style={{ color: '#a7f3d0', fontWeight: '600' }}>Native Tree Canopy</span>
-                  <span style={{ color: '#9ca3af', fontSize: '11px' }}> (-2.2°C relief)</span>
-                </div>
-              </div>
+        <div style={{ marginTop: '10px' }}>
+          {/* Distribution Histogram Mini Curve */}
+          <div style={{ width: '100%', height: '22px', marginBottom: '6px', opacity: 0.85 }}>
+            <svg style={{ width: '100%', height: '100%' }} viewBox="0 0 100 20" preserveAspectRatio="none">
+              <path d="M0 18 Q 20 17, 30 14 T 45 10 T 60 4 T 75 8 T 90 2 T 100 1" fill="none" stroke="#ffb3ad" strokeWidth="1.5" />
+              <path d="M0 18 Q 20 17, 30 14 T 45 10 T 60 4 T 75 8 T 90 2 T 100 1 L 100 20 L 0 20 Z" fill="#ff5252" fillOpacity="0.2" />
+            </svg>
+          </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#06b6d4', display: 'inline-block', boxShadow: '0 0 8px #06b6d4' }} />
-                <div>
-                  <span style={{ color: '#a5f3fc', fontWeight: '600' }}>Cool High-Albedo Roofs</span>
-                  <span style={{ color: '#9ca3af', fontSize: '11px' }}> (-2.8°C relief)</span>
-                </div>
-              </div>
+          {/* Chromatic Differential Gradient Bar */}
+          <div
+            style={{
+              height: '8px',
+              width: '100%',
+              borderRadius: '9999px',
+              background: 'linear-gradient(90deg, #00e676 0%, #4edea3 22%, #00b2d0 42%, #e0e0e0 52%, #ffb74d 68%, #ff3d00 85%, #d50000 100%)'
+            }}
+          />
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#8b5cf6', display: 'inline-block', boxShadow: '0 0 8px #8b5cf6' }} />
-                <div>
-                  <span style={{ color: '#ddd6fe', fontWeight: '600' }}>Living Green Roofs</span>
-                  <span style={{ color: '#9ca3af', fontSize: '11px' }}> (-3.2°C relief)</span>
-                </div>
-              </div>
+          {/* Tick Marks & Numerical Range */}
+          <div className="font-mono" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '6px', fontSize: '9px', fontWeight: '600' }}>
+            <span style={{ color: '#4edea3', fontWeight: '700' }}>-5°C (Cool Sink)</span>
+            <span style={{ color: '#86948a' }}>0°C Neutral</span>
+            <span style={{ color: '#ffb3ad', fontWeight: '700' }}>+7°C (Heat Trap)</span>
+          </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '11px', height: '11px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block', boxShadow: '0 0 8px #f59e0b' }} />
-                <div>
-                  <span style={{ color: '#fde68a', fontWeight: '600' }}>Bioswales & Misting</span>
-                  <span style={{ color: '#9ca3af', fontSize: '11px' }}> (-1.8°C relief)</span>
-                </div>
+          <div className="font-mono" style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: '6px',
+            paddingTop: '6px',
+            borderTop: '1px solid rgba(53, 57, 68, 0.4)',
+            fontSize: '9px',
+            color: '#86948a'
+          }}>
+            <span>Guindy & Maritime Buffer</span>
+            <span style={{ color: '#ffb3ad', fontWeight: '500' }}>Industrial Tin Roofs</span>
+          </div>
+
+          {/* Solution Categories Overview */}
+          {viewMode === 'solutions' && (
+            <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(53, 57, 68, 0.4)', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4edea3', boxShadow: '0 0 6px #4edea3' }} />
+                <span style={{ color: '#dfe2f1', fontWeight: '500' }}>Native Biosolar Canopy (-3.2°C)</span>
               </div>
-            </div>
-          ) : (
-            /* Baseline Heat Legend */
-            <div>
-              <div style={{
-                height: '6px',
-                borderRadius: '3px',
-                background: 'linear-gradient(90deg, #10b981 0%, #f59e0b 55%, #ef4444 100%)',
-                marginBottom: '10px'
-              }} />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444', display: 'inline-block', boxShadow: '0 0 8px #ef4444' }} />
-                  <span style={{ color: '#fca5a5', fontWeight: '500' }}>&ge; 0.82 — Critical Hotspot</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block', boxShadow: '0 0 6px #f59e0b' }} />
-                  <span style={{ color: '#fde68a', fontWeight: '500' }}>0.70 – 0.81 — Moderate Hotspot</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 6px #10b981' }} />
-                  <span style={{ color: '#a7f3d0', fontWeight: '500' }}>&lt; 0.70 — Low Heat Risk</span>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4cd7f6', boxShadow: '0 0 6px #4cd7f6' }} />
+                <span style={{ color: '#dfe2f1', fontWeight: '500' }}>Cool Roof Albedo Retrofit (-2.8°C)</span>
               </div>
             </div>
           )}
-
-          <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', marginTop: '10px', paddingTop: '8px', fontSize: '11px', color: '#9ca3af', lineHeight: 1.4 }}>
-            Click markers to view actionable Tier 1 interventions & Tier 2 AI suggestions.
-          </div>
         </div>
       )}
     </div>
