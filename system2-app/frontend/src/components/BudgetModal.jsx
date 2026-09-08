@@ -4,12 +4,14 @@ import { X, Calculator, ArrowRight, CheckCircle2, TrendingDown, DollarSign, Laye
 import { ENDPOINTS } from '../config/api';
 
 const PRESET_BUDGETS = [
+  { label: '₹1L', value: 100000 },
   { label: '₹2.5L', value: 250000 },
   { label: '₹5L', value: 500000 },
   { label: '₹7.5L', value: 750000 },
   { label: '₹10L', value: 1000000 },
   { label: '₹15L', value: 1500000 },
   { label: '₹20L', value: 2000000 },
+  { label: '₹30L', value: 3000000 },
 ];
 
 const ZONES = ['All Zones', 'Manali', 'Koyambedu', 'Ambattur', 'Anna Nagar', 'Teynampet', 'Perungudi'];
@@ -27,11 +29,13 @@ export default function BudgetModal({ isOpen, onClose, defaultZone }) {
     }
   }, [defaultZone]);
 
-  const runOptimization = () => {
+  const runOptimization = (budgetVal = budget) => {
+    const num = parseFloat(budgetVal);
+    if (isNaN(num) || num <= 0) return;
     setLoading(true);
     setError(null);
     axios.post(ENDPOINTS.OPTIMIZE_BUDGET, {
-      budget: parseFloat(budget),
+      budget: num,
       zone: selectedZone && selectedZone !== 'All Zones' ? selectedZone : null
     })
       .then(res => {
@@ -44,11 +48,14 @@ export default function BudgetModal({ isOpen, onClose, defaultZone }) {
       });
   };
 
+  // Debounced auto-calculation when budget or selectedZone changes
   useEffect(() => {
-    if (isOpen) {
-      runOptimization();
-    }
-  }, [isOpen, selectedZone]);
+    if (!isOpen) return;
+    const timer = setTimeout(() => {
+      runOptimization(budget);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [isOpen, budget, selectedZone]);
 
   if (!isOpen) return null;
 
@@ -157,29 +164,91 @@ export default function BudgetModal({ isOpen, onClose, defaultZone }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <label style={{ fontSize: '13px', fontWeight: '600', color: '#fff' }}>
-              Allocated Municipal Budget:
-            </label>
-            <span style={{ fontSize: '20px', fontWeight: '800', color: 'var(--accent-emerald)', fontFamily: 'var(--font-heading)' }}>
-              ₹{Number(budget).toLocaleString('en-IN')}
-            </span>
-          </div>
+          {/* Dual Budget Controls: Text/Number Input + Interactive Slider */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#fff', display: 'block' }}>
+                  Allocated Municipal Budget:
+                </label>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                  Type an exact amount or drag the slider
+                </span>
+              </div>
 
-          <input
-            type="range"
-            min="100000"
-            max="2000000"
-            step="50000"
-            value={budget}
-            onChange={(e) => setBudget(Number(e.target.value))}
-            style={{ width: '100%', accentColor: '#10b981', cursor: 'pointer', height: '6px' }}
-          />
+              {/* Direct Numeric Input Box with Currency Symbol */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                background: 'rgba(0, 0, 0, 0.45)',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+                borderRadius: '8px',
+                padding: '5px 12px',
+                boxShadow: '0 0 12px rgba(16, 185, 129, 0.15)',
+                transition: 'border-color 0.2s'
+              }}>
+                <span style={{ fontSize: '16px', fontWeight: '800', color: '#34d399', marginRight: '6px' }}>
+                  ₹
+                </span>
+                <input
+                  type="number"
+                  min="50000"
+                  max="10000000"
+                  step="10000"
+                  value={budget}
+                  onChange={(e) => {
+                    const val = e.target.value === '' ? '' : Number(e.target.value);
+                    setBudget(val);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') runOptimization(budget);
+                  }}
+                  placeholder="Enter budget..."
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                    color: '#fff',
+                    fontSize: '18px',
+                    fontWeight: '800',
+                    width: '140px',
+                    fontFamily: 'var(--font-heading)'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Range Slider in sync with input */}
+            <div style={{ position: 'relative', paddingTop: '4px', paddingBottom: '4px' }}>
+              <input
+                type="range"
+                min="50000"
+                max="3000000"
+                step="25000"
+                value={Math.min(3000000, Math.max(50000, Number(budget) || 50000))}
+                onChange={(e) => setBudget(Number(e.target.value))}
+                style={{
+                  width: '100%',
+                  accentColor: '#10b981',
+                  cursor: 'pointer',
+                  height: '6px',
+                  borderRadius: '3px'
+                }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                <span>₹50,000 (Min)</span>
+                <span style={{ color: '#34d399', fontWeight: '700' }}>
+                  ₹{Number(budget || 0).toLocaleString('en-IN')}
+                </span>
+                <span>₹30,00,000 (₹30 Lakhs)</span>
+              </div>
+            </div>
+          </div>
 
           {/* Quick Presets */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', flexWrap: 'wrap', gap: '6px' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Quick Presets:</span>
-            <div style={{ display: 'flex', gap: '6px' }}>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
               {PRESET_BUDGETS.map(p => (
                 <button
                   key={p.value}
@@ -192,7 +261,8 @@ export default function BudgetModal({ isOpen, onClose, defaultZone }) {
                     borderRadius: '6px',
                     fontSize: '11px',
                     fontWeight: '600',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    transition: 'all 0.15s'
                   }}
                 >
                   {p.label}
@@ -201,9 +271,12 @@ export default function BudgetModal({ isOpen, onClose, defaultZone }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+              ⚡ Real-time Knapsack ROI calculation active
+            </span>
             <button
-              onClick={runOptimization}
+              onClick={() => runOptimization(budget)}
               disabled={loading}
               style={{
                 background: 'linear-gradient(135deg, #10b981, #059669)',
