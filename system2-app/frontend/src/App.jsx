@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Bot } from 'lucide-react';
 import Header from './components/Header';
 import StatsBar from './components/StatsBar';
 import HeatMap from './components/HeatMap';
@@ -170,38 +170,52 @@ export default function App() {
         defaultZone={selectedZone}
       />
 
-      {/* Floating Action Button for AI Copilot (when chat is closed) */}
+      {/* Floating Small Icon Button for AI Copilot (when chat is closed) */}
       {!isChatbotOpen && (
         <button
           onClick={() => setIsChatbotOpen(true)}
           title="Ask AI Copilot doubts about cooling solutions"
-          className="animate-fade-in"
+          aria-label="Open AI Copilot Chatbot"
           style={{
             position: 'fixed',
             left: '24px',
             bottom: '24px',
             zIndex: 1150,
+            width: '46px',
+            height: '46px',
+            borderRadius: '50%',
             background: 'linear-gradient(135deg, #10b981 0%, #00b2d0 100%)',
             color: '#003824',
-            border: '1px solid rgba(255, 255, 255, 0.35)',
-            borderRadius: '9999px',
-            padding: '11px 18px',
+            border: '2px solid rgba(255, 255, 255, 0.45)',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            justifyContent: 'center',
             cursor: 'pointer',
-            boxShadow: '0 8px 30px rgba(16, 185, 129, 0.45)',
-            fontFamily: 'var(--font-headline)',
-            fontSize: '13px',
-            fontWeight: '800',
-            letterSpacing: '0.02em',
-            transition: 'all 0.2s ease'
+            boxShadow: '0 6px 20px rgba(16, 185, 129, 0.45), 0 0 12px rgba(0, 178, 208, 0.35)',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
-          onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
-          onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'scale(1.12)';
+            e.currentTarget.style.boxShadow = '0 8px 26px rgba(16, 185, 129, 0.65), 0 0 20px rgba(0, 178, 208, 0.55)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 6px 20px rgba(16, 185, 129, 0.45), 0 0 12px rgba(0, 178, 208, 0.35)';
+          }}
         >
-          <Sparkles size={16} color="#003824" />
-          <span>Ask AI Copilot</span>
+          {/* Pulsing online status dot */}
+          <span style={{
+            position: 'absolute',
+            top: '-1px',
+            right: '-1px',
+            width: '11px',
+            height: '11px',
+            borderRadius: '50%',
+            background: '#4edea3',
+            border: '2px solid #0a0e18',
+            boxShadow: '0 0 6px #4edea3'
+          }} />
+          <Bot size={22} color="#003824" strokeWidth={2.3} />
         </button>
       )}
 
