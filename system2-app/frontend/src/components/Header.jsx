@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Calculator, RefreshCw, FileDown, Radio, Flame, ShieldAlert, Cpu } from 'lucide-react';
+import { Sparkles, Calculator, RefreshCw, Radio, Flame, ShieldAlert, Cpu } from 'lucide-react';
 
 const ZONES = [
   { id: 'All Zones', label: 'All Zones (7)' },
@@ -42,24 +42,6 @@ export default function Header({
     return () => clearInterval(timer);
   }, []);
 
-  const handleExportReport = () => {
-    const reportData = {
-      platform: 'HeatScape NEXORA CMA PLATFORM v3.4-PROD',
-      timestamp: new Date().toISOString(),
-      zone: selectedZone,
-      total_critical_cells: hotspotCount,
-      telemetry: 'LANDSAT-9 TIRS-2 & INSAT-3DR ONLINE',
-      mean_surface_lst: '38.8°C',
-      knapsack_status: 'TN-HAP v2 APPROVED'
-    };
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `HeatScape_GIS_Report_${selectedZone.replace(/\s+/g, '_')}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '14px 20px 10px 20px' }}>
@@ -165,31 +147,6 @@ export default function Header({
             </span>
           </div>
 
-          {/* Export GIS Report Button */}
-          <button
-            onClick={handleExportReport}
-            title="Download JSON telemetry summary"
-            style={{
-              background: '#1c1f2a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: '#4edea3',
-              borderRadius: '8px',
-              padding: '6px 13px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              fontSize: '11px',
-              fontWeight: '600',
-              fontFamily: 'var(--font-mono)',
-              transition: 'all 0.15s ease'
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.background = '#262a35'; e.currentTarget.style.color = '#fff'; }}
-            onMouseOut={(e) => { e.currentTarget.style.background = '#1c1f2a'; e.currentTarget.style.color = '#4edea3'; }}
-          >
-            <FileDown size={14} />
-            <span>EXPORT GIS</span>
-          </button>
 
           {/* Refresh / Re-run Sync */}
           <button
