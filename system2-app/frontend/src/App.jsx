@@ -149,12 +149,22 @@ export default function App() {
     ? hotspots
     : hotspots.filter(h => (h.zone || '').toLowerCase() === selectedZone.toLowerCase());
 
+  const handleSelectZone = (zone) => {
+    setSelectedZone(zone);
+    if (zone && zone.toLowerCase() !== 'all zones') {
+      const matching = hotspots.filter(h => (h.zone || '').toLowerCase() === zone.toLowerCase());
+      if (matching.length > 0) {
+        setSelectedHotspot(matching[0]);
+      }
+    }
+  };
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
       {/* Top App Header */}
       <Header
         selectedZone={selectedZone}
-        onSelectZone={setSelectedZone}
+        onSelectZone={handleSelectZone}
         onOpenBudgetModal={() => setIsBudgetModalOpen(true)}
         onOpenChatbot={() => setIsChatbotOpen(true)}
         hotspotCount={filteredHotspots.length}
@@ -240,10 +250,12 @@ export default function App() {
         {/* Leaflet Heat Hotspot Map */}
         <HeatMap
           hotspots={filteredHotspots}
+          allHotspots={hotspots}
           selectedHotspot={selectedHotspot}
           onSelectHotspot={(h) => setSelectedHotspot(h)}
           viewMode={viewMode}
           adoptedHotspots={adoptedHotspots}
+          selectedZone={selectedZone}
         />
 
         {/* Map Legend Overlay */}

@@ -2,16 +2,75 @@ import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from 'react-leaflet';
 import { Wind, Trees, Flame, Compass, CheckCircle2, Radio, Layers } from 'lucide-react';
 
-// Smooth map fly-to controller
-function MapController({ selectedHotspot }) {
+// Pre-calculated centroid coordinates and zoom levels for Chennai regions
+const ZONE_CENTROIDS = {
+  'Manali': { center: [13.1678, 80.2610], zoom: 13.5 },
+  'Ambattur': { center: [13.1146, 80.1551], zoom: 13.5 },
+  'Anna Nagar': { center: [13.0872, 80.2133], zoom: 14 },
+  'Koyambedu': { center: [13.0689, 80.1947], zoom: 14 },
+  'Teynampet': { center: [13.0424, 80.2479], zoom: 14 },
+  'Perungudi': { center: [12.9662, 80.2469], zoom: 13.5 },
+  'Royapuram': { center: [13.1130, 80.2950], zoom: 14 },
+  'All Zones': { center: [13.0827, 80.2407], zoom: 11 },
+};
+
+// Smooth map fly-to controller with region re-centering
+function MapController({ selectedHotspot, selectedZone, hotspots = [] }) {
   const map = useMap();
 
+  // Re-center whenever the selected region/zone changes
+  useEffect(() => {
+    if (!selectedZone) return;
+
+    if (selectedZone.toLowerCase() === 'all zones') {
+      map.flyTo([13.0827, 80.2407], 11, {
+        animate: true,
+        duration: 0.9,
+      });
+      return;
+    }
+
+    // Try finding exact centroid from matching hotspots
+    const zoneHotspots = hotspots.filter(
+      h => (h.zone || '').toLowerCase() === selectedZone.toLowerCase()
+    );
+
+    if (zoneHotspots.length > 0) {
+      const validCoords = zoneHotspots
+        .map(h => [parseFloat(h.lat), parseFloat(h.lon)])
+        .filter(c => !isNaN(c[0]) && !isNaN(c[1]));
+
+      if (validCoords.length > 0) {
+        const avgLat = validCoords.reduce((sum, c) => sum + c[0], 0) / validCoords.length;
+        const avgLon = validCoords.reduce((sum, c) => sum + c[1], 0) / validCoords.length;
+        map.flyTo([avgLat, avgLon], 13.5, {
+          animate: true,
+          duration: 0.9,
+        });
+        return;
+      }
+    }
+
+    // Fallback to static zone coordinates
+    const matchedKey = Object.keys(ZONE_CENTROIDS).find(
+      k => k.toLowerCase() === selectedZone.toLowerCase()
+    );
+    if (matchedKey) {
+      const config = ZONE_CENTROIDS[matchedKey];
+      map.flyTo(config.center, config.zoom, {
+        animate: true,
+        duration: 0.9,
+      });
+    }
+  }, [selectedZone, map]);
+
+  // Re-center when an individual hotspot is selected
   useEffect(() => {
     if (selectedHotspot && selectedHotspot.lat && selectedHotspot.lon) {
       const lat = parseFloat(selectedHotspot.lat);
       const lon = parseFloat(selectedHotspot.lon);
       if (!isNaN(lat) && !isNaN(lon)) {
-        map.flyTo([lat, lon], 14, {
+        map.flyTo([lat, lon], 14.5, {
           animate: true,
           duration: 0.8,
         });
@@ -52,7 +111,8 @@ export default function HeatMap({
   selectedHotspot,
   onSelectHotspot,
   viewMode = 'solutions', // 'solutions' (Optimistic Blueprint) or 'baseline' (Current Heat)
-  adoptedHotspots = {}
+  adoptedHotspots = {},
+  selectedZone = 'All Zones'
 }) {
   const [basemap, setBasemap] = useState('dark');
   const [activeTelemetryLayer, setActiveTelemetryLayer] = useState('diff'); // 'diff' | 'tirs' | 'ndvi'
@@ -245,7 +305,11 @@ export default function HeatMap({
           attributionControl={false}
           style={{ width: '100%', height: '100%', minHeight: '620px' }}
         >
-          <MapController selectedHotspot={selectedHotspot} />
+          <MapController
+            selectedHotspot={selectedHotspot}
+            selectedZone={selectedZone}
+            hotspots={hotspots}
+          />
 
           {/* Clean Base Layer (NO WATERMARKS) */}
           <TileLayer
