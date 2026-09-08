@@ -1,7 +1,7 @@
 // Base URL for HeatScape Backend API
 // Set to http://localhost:8000 for local development
-// Update to your Render backend URL once deployed (e.g. "https://heatscape-api.onrender.com")
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? "https://heatscape-nexora.onrender.com" : "http://localhost:8000");
 
 export const ENDPOINTS = {
   HOTSPOTS: `${API_BASE_URL}/api/hotspots`,
