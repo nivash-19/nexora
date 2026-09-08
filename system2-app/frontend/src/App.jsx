@@ -8,6 +8,7 @@ import DetailPanel from './components/DetailPanel';
 import BudgetModal from './components/BudgetModal';
 import AdoptedPlanModal from './components/AdoptedPlanModal';
 import ChatbotModal from './components/ChatbotModal';
+import AIBudgetAdvisorModal from './components/AIBudgetAdvisorModal';
 import Legend from './components/Legend';
 import { ENDPOINTS } from './config/api';
 
@@ -22,6 +23,7 @@ export default function App() {
     timestamp: Date.now()
   }));
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [isAIBudgetAdvisorOpen, setIsAIBudgetAdvisorOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isAdoptedModalOpen, setIsAdoptedModalOpen] = useState(false);
   const [initialOptimizerBudget, setInitialOptimizerBudget] = useState(null);
@@ -193,6 +195,7 @@ export default function App() {
         selectedZone={selectedZone}
         onSelectZone={handleSelectZone}
         onOpenBudgetModal={() => setIsBudgetModalOpen(true)}
+        onOpenAIBudgetAdvisor={() => setIsAIBudgetAdvisorOpen(true)}
         onOpenChatbot={() => setIsChatbotOpen(true)}
         hotspotCount={filteredHotspots.length}
         onRefresh={fetchHotspots}
@@ -323,7 +326,19 @@ export default function App() {
         adoptedHotspots={adoptedHotspots}
         onToggleAdopt={handleToggleAdopt}
         onAdoptMultiple={handleAdoptMultiple}
+        onOpenAIBudgetAdvisor={() => setIsAIBudgetAdvisorOpen(true)}
         initialBudget={initialOptimizerBudget}
+      />
+
+      {/* AI Budget & Priority Attention Advisor Modal */}
+      <AIBudgetAdvisorModal
+        isOpen={isAIBudgetAdvisorOpen}
+        onClose={() => setIsAIBudgetAdvisorOpen(false)}
+        defaultZone={selectedZone}
+        adoptedHotspots={adoptedHotspots}
+        onToggleAdopt={handleToggleAdopt}
+        onAdoptMultiple={handleAdoptMultiple}
+        onOpenChatbot={() => setIsChatbotOpen(true)}
       />
 
       {/* Adopted GCC Ward Action Plan Modal */}

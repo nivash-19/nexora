@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Calculator, RefreshCw, Radio, Flame, ShieldAlert, Cpu, Leaf } from 'lucide-react';
+import { Sparkles, Calculator, RefreshCw, Radio, Flame, ShieldAlert, Cpu, Leaf, Brain } from 'lucide-react';
 
 const ZONES = [
   { id: 'All Zones', label: 'All Zones (7)' },
@@ -15,6 +15,7 @@ export default function Header({
   selectedZone,
   onSelectZone,
   onOpenBudgetModal,
+  onOpenAIBudgetAdvisor,
   onOpenChatbot,
   hotspotCount,
   onRefresh,
@@ -357,6 +358,33 @@ export default function Header({
           >
             <Calculator size={14} />
             <span>Budget Optimizer</span>
+          </button>
+
+          {/* AI Priority Advisor Button (Adjacent to Budget Optimizer) */}
+          <button
+            onClick={onOpenAIBudgetAdvisor}
+            title="AI-optimized priority allocation: see which zones need the most attention with reasons, budget, and LST relief"
+            style={{
+              background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%)',
+              border: '1px solid rgba(168, 85, 247, 0.45)',
+              color: '#c084fc',
+              borderRadius: '8px',
+              padding: '6px 14px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: '700',
+              fontFamily: 'var(--font-headline)',
+              boxShadow: '0 0 14px rgba(168, 85, 247, 0.25)',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(168, 85, 247, 0.4)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%)'; e.currentTarget.style.color = '#c084fc'; }}
+          >
+            <Brain size={14} />
+            <span>AI Budget Advisor</span>
           </button>
 
           {/* Action Plan Button if sites adopted */}

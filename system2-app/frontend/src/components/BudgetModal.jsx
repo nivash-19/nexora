@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, SlidersHorizontal, ArrowRight, CheckCircle2, TrendingDown, DollarSign, Layers, ShieldCheck, Leaf } from 'lucide-react';
+import { X, SlidersHorizontal, ArrowRight, CheckCircle2, TrendingDown, DollarSign, Layers, ShieldCheck, Leaf, Brain } from 'lucide-react';
 import { ENDPOINTS } from '../config/api';
 
 const PRESET_BUDGETS = [
@@ -21,6 +21,7 @@ export default function BudgetModal({
   adoptedHotspots = {},
   onToggleAdopt,
   onAdoptMultiple,
+  onOpenAIBudgetAdvisor,
   initialBudget
 }) {
   const [budget, setBudget] = useState(initialBudget ? Number(initialBudget) : 1500000);
@@ -169,6 +170,51 @@ export default function BudgetModal({
             <X size={16} />
           </button>
         </div>
+
+        {/* Quick Switch to AI Priority & Attention Advisor Banner */}
+        {onOpenAIBudgetAdvisor && (
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)',
+            border: '1px solid rgba(168, 85, 247, 0.35)',
+            borderRadius: '12px',
+            padding: '10px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '10px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Brain size={16} color="#c084fc" />
+              <span style={{ fontSize: '12px', color: '#dfe2f1' }}>
+                Want an AI-ranked breakdown of which areas need the <strong>most attention</strong> with microclimate reasons & LST drops?
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                onClose();
+                onOpenAIBudgetAdvisor();
+              }}
+              style={{
+                background: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)',
+                border: 'none',
+                color: '#fff',
+                borderRadius: '6px',
+                padding: '5px 12px',
+                fontSize: '11px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                boxShadow: '0 2px 8px rgba(168, 85, 247, 0.3)'
+              }}
+            >
+              <span>Open AI Priority Advisor →</span>
+            </button>
+          </div>
+        )}
 
         {/* Preset Chips & Zone Filter */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
