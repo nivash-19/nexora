@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Calculator, RefreshCw, Radio, Flame, ShieldAlert, Cpu } from 'lucide-react';
+import { Sparkles, Calculator, RefreshCw, Radio, Flame, ShieldAlert, Cpu, Leaf } from 'lucide-react';
 
 const ZONES = [
   { id: 'All Zones', label: 'All Zones (7)' },
@@ -20,7 +20,9 @@ export default function Header({
   onRefresh,
   loading,
   viewMode,
-  onToggleViewMode
+  onToggleViewMode,
+  adoptedCount = 0,
+  onOpenAdoptedModal
 }) {
   const [currentTime, setCurrentTime] = useState('');
 
@@ -327,6 +329,35 @@ export default function Header({
             <Calculator size={14} />
             <span>Budget Optimizer</span>
           </button>
+
+          {/* Action Plan Button if sites adopted */}
+          {adoptedCount > 0 && (
+            <button
+              onClick={onOpenAdoptedModal}
+              title="View your chosen ward action plan interventions"
+              style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #00b2d0 100%)',
+                border: 'none',
+                color: '#003824',
+                borderRadius: '8px',
+                padding: '6px 14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '800',
+                fontFamily: 'var(--font-headline)',
+                boxShadow: '0 0 14px rgba(78, 222, 163, 0.4)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.03)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+            >
+              <Leaf size={14} color="#003824" />
+              <span>Action Plan ({adoptedCount})</span>
+            </button>
+          )}
         </div>
       </section>
     </div>

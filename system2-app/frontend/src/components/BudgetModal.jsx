@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, SlidersHorizontal, ArrowRight, CheckCircle2, TrendingDown, DollarSign, Layers, ShieldCheck } from 'lucide-react';
+import { X, SlidersHorizontal, ArrowRight, CheckCircle2, TrendingDown, DollarSign, Layers, ShieldCheck, Leaf } from 'lucide-react';
 import { ENDPOINTS } from '../config/api';
 
 const PRESET_BUDGETS = [
@@ -14,8 +14,16 @@ const PRESET_BUDGETS = [
 
 const ZONES = ['All Zones', 'Manali', 'Koyambedu', 'Ambattur', 'Anna Nagar', 'Teynampet', 'Perungudi'];
 
-export default function BudgetModal({ isOpen, onClose, defaultZone }) {
-  const [budget, setBudget] = useState(1500000);
+export default function BudgetModal({
+  isOpen,
+  onClose,
+  defaultZone,
+  adoptedHotspots = {},
+  onToggleAdopt,
+  onAdoptMultiple,
+  initialBudget
+}) {
+  const [budget, setBudget] = useState(initialBudget ? Number(initialBudget) : 1500000);
   const [selectedZone, setSelectedZone] = useState(defaultZone || 'All Zones');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,6 +34,16 @@ export default function BudgetModal({ isOpen, onClose, defaultZone }) {
       setSelectedZone(defaultZone);
     }
   }, [defaultZone]);
+
+  useEffect(() => {
+    if (initialBudget && Number(initialBudget) > 0) {
+      setBudget(Number(initialBudget));
+    }
+  }, [initialBudget, isOpen]);
+
+  const adoptedList = Object.values(adoptedHotspots);
+  const adoptedTotal = adoptedList.reduce((sum, item) => sum + (Number(item.cost) || 0), 0);
+  const adoptedTotalLakhs = (adoptedTotal / 100000).toFixed(2);
 
   const runOptimization = (budgetVal = budget) => {
     const num = parseFloat(budgetVal);
@@ -184,7 +202,45 @@ export default function BudgetModal({ isOpen, onClose, defaultZone }) {
             })}
           </div>
 
-          {/* Zone Selector */}
+          {/* Adopted Choices Ribbon if user has adopted hotspots */}
+        {adoptedList.length > 0 && (
+          <div style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid rgba(78, 222, 163, 0.35)',
+            borderRadius: '12px',
+            padding: '10px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '10px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Leaf size={16} color="#4edea3" />
+              <span className="font-mono" style={{ fontSize: '11px', color: '#4edea3', fontWeight: '700' }}>
+                YOUR ADOPTED CHOICES: {adoptedList.length} SITES (₹{adoptedTotalLakhs}L COMMITTED)
+              </span>
+            </div>
+            <button
+              onClick={() => setBudget(adoptedTotal > 0 ? adoptedTotal : 1500000)}
+              className="font-mono"
+              style={{
+                background: 'rgba(78, 222, 163, 0.2)',
+                border: '1px solid #4edea3',
+                color: '#4edea3',
+                borderRadius: '6px',
+                padding: '4px 10px',
+                fontSize: '10.5px',
+                fontWeight: '700',
+                cursor: 'pointer'
+              }}
+            >
+              Set Budget to Match Adopted Plan (₹{adoptedTotalLakhs}L)
+            </button>
+          </div>
+        )}
+
+        {/* Zone Filter Pill Selector */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="font-mono" style={{ fontSize: '10px', color: '#86948a' }}>ZONE:</span>
             <select
@@ -346,65 +402,139 @@ export default function BudgetModal({ isOpen, onClose, defaultZone }) {
 
         {/* Prioritized Knapsack Mini-Table */}
         {result && result.allocations && (
-          <div style={{
-            overflowX: 'auto',
-            borderRadius: '12px',
-            background: 'rgba(23, 27, 38, 0.7)',
-            border: '1px solid rgba(53, 57, 68, 0.4)'
-          }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '12px' }}>
-              <thead>
-                <tr style={{ background: 'rgba(38, 42, 53, 0.6)', borderBottom: '1px solid rgba(53, 57, 68, 0.5)' }}>
-                  <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rank / Cell</th>
-                  <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Intervention Blueprint</th>
-                  <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Allocated CapEx</th>
-                  <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cooling Gain</th>
-                  <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>ROI Score</th>
-                  <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Status</th>
-                </tr>
-              </thead>
-              <tbody className="font-mono">
-                {result.allocations.map((item, idx) => (
-                  <tr
-                    key={idx}
-                    style={{
-                      borderBottom: '1px solid rgba(53, 57, 68, 0.3)',
-                      transition: 'background 0.15s ease'
-                    }}
-                    onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(38, 42, 53, 0.4)'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                  >
-                    <td style={{ padding: '10px 14px', color: '#ffb3ad', fontWeight: '700' }}>
-                      #{String(idx + 1).padStart(2, '0')} • {item.cell_id} ({item.zone})
-                    </td>
-                    <td style={{ padding: '10px 14px', color: '#dfe2f1' }}>
-                      {item.intervention} <span style={{ color: '#86948a', fontSize: '10px' }}>({item.scale})</span>
-                    </td>
-                    <td style={{ padding: '10px 14px', color: '#dfe2f1', fontWeight: '700' }}>
-                      ₹{Number(item.cost).toLocaleString('en-IN')}
-                    </td>
-                    <td style={{ padding: '10px 14px', color: '#4edea3', fontWeight: '700' }}>
-                      -{item.impact_reduction_celsius}°C LST
-                    </td>
-                    <td style={{ padding: '10px 14px', color: '#4cd7f6', fontWeight: '700' }}>
-                      {item.roi_score}x
-                    </td>
-                    <td style={{ padding: '10px 14px', textAlign: 'right' }}>
-                      <span style={{
-                        padding: '2px 8px',
-                        borderRadius: '4px',
-                        backgroundColor: 'rgba(78, 222, 163, 0.18)',
-                        color: '#4edea3',
-                        fontWeight: '800',
-                        fontSize: '9.5px'
-                      }}>
-                        OPTIMAL INCLUSION
-                      </span>
-                    </td>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span className="font-mono" style={{ fontSize: '11px', color: '#86948a', letterSpacing: '0.05em' }}>
+                PRIORITIZED ALLOCATIONS ({result.allocations.length} FUNDED)
+              </span>
+              {onAdoptMultiple && (
+                <button
+                  onClick={() => onAdoptMultiple(result.allocations)}
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    border: '1px solid rgba(78, 222, 163, 0.4)',
+                    color: '#4edea3',
+                    borderRadius: '6px',
+                    padding: '4px 10px',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <Leaf size={12} />
+                  <span>Adopt All {result.allocations.length} Recommended Hotspots</span>
+                </button>
+              )}
+            </div>
+
+            <div style={{
+              overflowX: 'auto',
+              borderRadius: '12px',
+              background: 'rgba(23, 27, 38, 0.7)',
+              border: '1px solid rgba(53, 57, 68, 0.4)'
+            }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '12px' }}>
+                <thead>
+                  <tr style={{ background: 'rgba(38, 42, 53, 0.6)', borderBottom: '1px solid rgba(53, 57, 68, 0.5)' }}>
+                    <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Rank / Cell</th>
+                    <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Intervention Blueprint</th>
+                    <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Allocated CapEx</th>
+                    <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cooling Gain</th>
+                    <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>ROI Score</th>
+                    <th className="font-mono" style={{ padding: '10px 14px', color: '#86948a', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="font-mono">
+                  {result.allocations.map((item, idx) => {
+                    const isUserAdopted = !!adoptedHotspots[item.cell_id];
+                    return (
+                      <tr
+                        key={idx}
+                        style={{
+                          borderBottom: '1px solid rgba(53, 57, 68, 0.3)',
+                          transition: 'background 0.15s ease'
+                        }}
+                        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(38, 42, 53, 0.4)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                      >
+                        <td style={{ padding: '10px 14px', color: '#ffb3ad', fontWeight: '700' }}>
+                          #{String(idx + 1).padStart(2, '0')} • {item.cell_id} ({item.zone})
+                        </td>
+                        <td style={{ padding: '10px 14px', color: '#dfe2f1' }}>
+                          {item.intervention} <span style={{ color: '#86948a', fontSize: '10px' }}>({item.scale})</span>
+                        </td>
+                        <td style={{ padding: '10px 14px', color: '#dfe2f1', fontWeight: '700' }}>
+                          ₹{Number(item.cost).toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ padding: '10px 14px', color: '#4edea3', fontWeight: '700' }}>
+                          -{item.impact_reduction_celsius}°C LST
+                        </td>
+                        <td style={{ padding: '10px 14px', color: '#4cd7f6', fontWeight: '700' }}>
+                          {item.roi_score}x
+                        </td>
+                        <td style={{ padding: '10px 14px', textAlign: 'right' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                            {isUserAdopted ? (
+                              <span style={{
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                backgroundColor: 'rgba(78, 222, 163, 0.25)',
+                                border: '1px solid #4edea3',
+                                color: '#4edea3',
+                                fontWeight: '800',
+                                fontSize: '9.5px'
+                              }}>
+                                Adopted Choice ✓
+                              </span>
+                            ) : onToggleAdopt ? (
+                              <button
+                                onClick={() => onToggleAdopt({
+                                  cell_id: item.cell_id,
+                                  zone: item.zone,
+                                  cause: item.cause,
+                                  tier1_recommendation: {
+                                    intervention: item.intervention,
+                                    standard_cost_inr: item.cost,
+                                    cost_display: `₹${Number(item.cost).toLocaleString('en-IN')}`,
+                                    impact_display: `-${item.impact_reduction_celsius}°C LST`,
+                                    delta_t: item.impact_reduction_celsius
+                                  }
+                                })}
+                                style={{
+                                  background: 'rgba(78, 222, 163, 0.12)',
+                                  border: '1px solid rgba(78, 222, 163, 0.3)',
+                                  color: '#4edea3',
+                                  borderRadius: '4px',
+                                  padding: '2px 8px',
+                                  fontSize: '9.5px',
+                                  fontWeight: '700',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                + Adopt
+                              </button>
+                            ) : null}
+                            <span style={{
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              backgroundColor: 'rgba(78, 222, 163, 0.18)',
+                              color: '#4edea3',
+                              fontWeight: '800',
+                              fontSize: '9.5px'
+                            }}>
+                              OPTIMAL
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

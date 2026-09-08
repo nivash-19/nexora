@@ -22,13 +22,19 @@ import {
 } from 'lucide-react';
 import { ENDPOINTS } from '../config/api';
 
-export default function DetailPanel({ hotspot, onClose }) {
+export default function DetailPanel({
+  hotspot,
+  onClose,
+  adoptedHotspots = {},
+  onToggleAdopt
+}) {
   const [tier2Data, setTier2Data] = useState(null);
   const [loadingTier2, setLoadingTier2] = useState(false);
   const [tier2Error, setTier2Error] = useState(null);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showAreaJustification, setShowAreaJustification] = useState(true);
-  const [adopted, setAdopted] = useState(false);
+
+  const isAdopted = !!(hotspot && adoptedHotspots[hotspot.cell_id]);
 
   const panelRef = useRef(null);
 
@@ -56,7 +62,6 @@ export default function DetailPanel({ hotspot, onClose }) {
     setTier2Error(null);
     setLoadingTier2(true);
     setShowAreaJustification(true);
-    setAdopted(false);
 
     axios.get(ENDPOINTS.TIER2_AI(hotspot.cell_id))
       .then(res => {
@@ -237,6 +242,31 @@ export default function DetailPanel({ hotspot, onClose }) {
           }}>
             Urban Cooling Blueprint
           </h2>
+
+          {/* Adopted Choice Status Badge */}
+          {isAdopted && (
+            <div style={{
+              marginTop: '8px',
+              background: 'rgba(16, 185, 129, 0.15)',
+              border: '1px solid rgba(78, 222, 163, 0.4)',
+              borderRadius: '8px',
+              padding: '6px 12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '8px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Leaf size={14} color="#4edea3" />
+                <span className="font-mono" style={{ fontSize: '11px', color: '#4edea3', fontWeight: '700' }}>
+                  ADOPTED INTO WARD ACTION PLAN ✓
+                </span>
+              </div>
+              <span className="font-mono" style={{ fontSize: '11px', color: '#fff', fontWeight: '800' }}>
+                {adoptedHotspots[hotspot.cell_id]?.cost_display || t1.cost_display}
+              </span>
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -600,15 +630,15 @@ export default function DetailPanel({ hotspot, onClose }) {
 
         {/* Action Button */}
         <button
-          onClick={() => setAdopted(true)}
+          onClick={() => onToggleAdopt && onToggleAdopt(hotspot)}
           style={{
             width: '100%',
             marginTop: '2px',
             padding: '11px 16px',
             borderRadius: '10px',
-            backgroundColor: adopted ? '#006c49' : '#10b981',
-            color: adopted ? '#6ffbbe' : '#003824',
-            border: 'none',
+            backgroundColor: isAdopted ? '#005236' : '#10b981',
+            color: isAdopted ? '#6ffbbe' : '#003824',
+            border: isAdopted ? '1px solid #4edea3' : 'none',
             fontFamily: 'var(--font-headline)',
             fontSize: '13px',
             fontWeight: '700',
@@ -617,12 +647,12 @@ export default function DetailPanel({ hotspot, onClose }) {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '8px',
-            boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
+            boxShadow: isAdopted ? '0 0 15px rgba(78, 222, 163, 0.35)' : '0 4px 14px rgba(16, 185, 129, 0.35)',
             transition: 'all 0.2s ease'
           }}
         >
-          {adopted ? <Check size={16} /> : <Leaf size={16} />}
-          <span>{adopted ? `Adopted into Ward Action Plan ✓` : `Adopt into GCC Ward Action Plan`}</span>
+          {isAdopted ? <Check size={16} /> : <Leaf size={16} />}
+          <span>{isAdopted ? `Adopted into Ward Action Plan ✓ (Click to Remove)` : `Adopt into GCC Ward Action Plan`}</span>
         </button>
       </div>
 

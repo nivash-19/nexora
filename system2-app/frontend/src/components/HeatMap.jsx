@@ -51,7 +51,8 @@ export default function HeatMap({
   hotspots = [],
   selectedHotspot,
   onSelectHotspot,
-  viewMode = 'solutions' // 'solutions' (Optimistic Blueprint) or 'baseline' (Current Heat)
+  viewMode = 'solutions', // 'solutions' (Optimistic Blueprint) or 'baseline' (Current Heat)
+  adoptedHotspots = {}
 }) {
   const [basemap, setBasemap] = useState('dark');
   const [activeTelemetryLayer, setActiveTelemetryLayer] = useState('diff'); // 'diff' | 'tirs' | 'ndvi'
@@ -275,8 +276,26 @@ export default function HeatMap({
             const markerColor = viewMode === 'solutions' ? solution.color : getBaselineColor(h.heat_score);
             const radius = isSelected ? 16 : (viewMode === 'solutions' ? 12 : 10);
 
+            const isAdopted = !!adoptedHotspots[h.cell_id];
+
             return (
               <React.Fragment key={h.cell_id}>
+                {/* Adopted in Ward Action Plan Ring */}
+                {isAdopted && (
+                  <CircleMarker
+                    center={[lat, lon]}
+                    radius={radius + 10}
+                    pathOptions={{
+                      color: '#4edea3',
+                      fillColor: '#10b981',
+                      fillOpacity: 0.35,
+                      weight: 2.5,
+                      dashArray: '3, 4'
+                    }}
+                    interactive={false}
+                  />
+                )}
+
                 {/* Optimistic Cooling Halo */}
                 <CircleMarker
                   center={[lat, lon]}
