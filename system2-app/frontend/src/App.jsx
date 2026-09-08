@@ -17,13 +17,14 @@ export default function App() {
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState('solutions'); // 'solutions' (Optimistic Blueprint) or 'baseline'
 
-  const fetchHotspots = () => {
+  const fetchHotspots = (retryCount = 0) => {
     setLoading(true);
     setError(null);
-    axios.get(ENDPOINTS.HOTSPOTS)
+    axios.get(ENDPOINTS.HOTSPOTS, { timeout: 20000 })
       .then(res => {
         setHotspots(res.data);
         setLoading(false);
+        setError(null);
         // Default select first hotspot if none selected
         if (res.data && res.data.length > 0 && !selectedHotspot) {
           setSelectedHotspot(res.data[0]);
@@ -31,7 +32,16 @@ export default function App() {
       })
       .catch(err => {
         console.error('Error fetching hotspots:', err);
-        setError('Unable to load hotspots from backend. Ensure FastAPI is running on port 8000.');
+        // If first attempt failed on production, auto-retry once after 4s to allow Render cold start
+        if (retryCount < 2) {
+          setTimeout(() => fetchHotspots(retryCount + 1), 3500);
+          return;
+        }
+        const isProd = import.meta.env.PROD;
+        const msg = isProd
+          ? 'Cloud backend is waking up on Render (free tier takes ~30-45s after inactivity). Click Retry.'
+          : 'Unable to load hotspots from backend. Ensure FastAPI is running on port 8000.';
+        setError(msg);
         setLoading(false);
       });
   };
@@ -100,12 +110,32 @@ export default function App() {
             zIndex: 1500,
             background: 'rgba(239, 68, 68, 0.95)',
             color: '#fff',
-            padding: '12px 24px',
-            borderRadius: '8px',
+            padding: '10px 18px',
+            borderRadius: '10px',
             boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-            fontSize: '13px'
+            fontSize: '13px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            maxWidth: '90%'
           }}>
-            {error}
+            <span>{error}</span>
+            <button
+              onClick={() => fetchHotspots(0)}
+              style={{
+                background: '#fff',
+                color: '#dc2626',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '4px 10px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                fontSize: '12px',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Retry
+            </button>
           </div>
         )}
 
