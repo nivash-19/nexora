@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: heatscape-backend
+    env: python
+    region: singapore
+    plan: free
+    rootDir: system2-app/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: GEMINI_API_KEY
+        sync: false
