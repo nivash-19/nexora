@@ -122,6 +122,37 @@ body {
   background: #4a5568;
 }
 
+/* Specialized Solution Window Scrollbar */
+.soln-panel-scroll {
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #4edea3 rgba(23, 27, 38, 0.9) !important;
+}
+
+.soln-panel-scroll::-webkit-scrollbar {
+  width: 8px !important;
+  display: block !important;
+}
+
+.soln-panel-scroll::-webkit-scrollbar-track {
+  background: rgba(15, 19, 29, 0.85) !important;
+  border-radius: 8px;
+  margin: 6px 0;
+}
+
+.soln-panel-scroll::-webkit-scrollbar-thumb {
+  background: #4edea3 !important;
+  border-radius: 8px;
+  border: 2px solid rgba(15, 19, 29, 0.85);
+}
+
+.soln-panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6ffbbe !important;
+}
+
+
 /* Glassmorphism Utilities */
 .glass-panel {
   background: var(--bg-card);

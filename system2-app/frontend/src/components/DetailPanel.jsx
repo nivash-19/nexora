@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   X,
@@ -11,7 +11,14 @@ import {
   Leaf,
   Lightbulb,
   Flame,
-  Check
+  Check,
+  DollarSign,
+  ArrowDownRight,
+  ChevronUp,
+  ChevronDown,
+  Target,
+  MapPin,
+  Users
 } from 'lucide-react';
 import { ENDPOINTS } from '../config/api';
 
@@ -22,6 +29,23 @@ export default function DetailPanel({ hotspot, onClose }) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [showAreaJustification, setShowAreaJustification] = useState(true);
   const [adopted, setAdopted] = useState(false);
+
+  const panelRef = useRef(null);
+
+  // Prevent Leaflet map scroll-interception when mouse wheel or trackpad scrolls over this panel
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    const stopScroll = (e) => {
+      e.stopPropagation();
+    };
+    el.addEventListener('wheel', stopScroll, { passive: false });
+    el.addEventListener('touchmove', stopScroll, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', stopScroll);
+      el.removeEventListener('touchmove', stopScroll);
+    };
+  }, [isMinimized, hotspot?.cell_id]);
 
   // Fetch Tier 2 on-demand ONLY when the hotspot is selected
   useEffect(() => {
@@ -151,30 +175,38 @@ export default function DetailPanel({ hotspot, onClose }) {
 
   return (
     <div
-      className="animate-slide-in"
+      ref={panelRef}
+      className="animate-slide-in soln-panel-scroll"
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
+      onScroll={(e) => e.stopPropagation()}
       style={{
-        width: '490px',
+        width: '500px',
         maxWidth: '92vw',
-        height: 'calc(100vh - 130px)',
-        overflowY: 'auto',
         position: 'fixed',
         right: '20px',
-        top: '110px',
+        top: '80px',
+        bottom: '16px',
+        maxHeight: 'calc(100vh - 96px)',
+        overflowY: 'auto',
+        overscrollBehavior: 'contain',
+        WebkitOverflowScrolling: 'touch',
         zIndex: 1100,
-        padding: '22px',
+        padding: '20px 22px',
         boxShadow: '0 25px 60px rgba(0, 0, 0, 0.85)',
         display: 'flex',
         flexDirection: 'column',
         gap: '16px',
-        border: '1px solid rgba(53, 57, 68, 0.5)',
+        border: '1px solid rgba(53, 57, 68, 0.6)',
         borderRadius: '18px',
-        background: 'rgba(15, 19, 29, 0.95)',
+        background: 'rgba(15, 19, 29, 0.96)',
         backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)'
+        WebkitBackdropFilter: 'blur(20px)',
+        pointerEvents: 'auto'
       }}
     >
       {/* 1. Header & Coordinates Dossier */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="font-mono" style={{
@@ -270,7 +302,8 @@ export default function DetailPanel({ hotspot, onClose }) {
         padding: '12px',
         borderRadius: '12px',
         background: 'rgba(10, 14, 24, 0.75)',
-        border: '1px solid rgba(53, 57, 68, 0.4)'
+        border: '1px solid rgba(53, 57, 68, 0.4)',
+        flexShrink: 0
       }}>
         {/* Factor 1: Heat Index (T) */}
         <div style={{ padding: '8px', borderRadius: '8px', background: '#171b26' }}>
@@ -309,7 +342,7 @@ export default function DetailPanel({ hotspot, onClose }) {
         <div style={{ padding: '8px', borderRadius: '8px', background: '#171b26' }}>
           <div className="font-mono" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginBottom: '6px' }}>
             <span style={{ color: '#bbcabf' }}>Water Buffer (W)</span>
-            <span style={{ color: '#4cd7f6', fontWeight: '700' }}>1.4 km</span>
+            <span style={{ color: '#4cd7f6', fontWeight: '700' }}>{factors.W_norm ? `${(factors.W_norm * 3).toFixed(1)} km` : '1.4 km'}</span>
           </div>
           <div style={{ width: '100%', height: '6px', borderRadius: '9999px', background: '#313540', overflow: 'hidden' }}>
             <div style={{ width: `${wNorm}%`, height: '100%', borderRadius: '9999px', background: '#00b2d0' }} />
@@ -317,94 +350,205 @@ export default function DetailPanel({ hotspot, onClose }) {
         </div>
       </div>
 
-      {/* 3. TIER 1 STANDARDIZED MUNICIPAL BLUEPRINT (Stitch Emerald Glass Card) */}
+      {/* 3. TIER 1 STANDARDIZED MUNICIPAL BLUEPRINT */}
       <div style={{
         position: 'relative',
-        overflow: 'hidden',
         borderRadius: '14px',
         backgroundColor: 'rgba(0, 56, 36, 0.25)',
         border: '1px solid rgba(78, 222, 163, 0.45)',
-        padding: '16px',
+        padding: '18px',
         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px'
+        gap: '14px',
+        flexShrink: 0
       }}>
-        <div style={{
-          position: 'absolute',
-          right: '-40px',
-          bottom: '-40px',
-          height: '130px',
-          width: '130px',
-          borderRadius: '50%',
-          backgroundColor: 'rgba(78, 222, 163, 0.1)',
-          filter: 'blur(30px)',
-          pointerEvents: 'none'
-        }} />
-
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <ShieldCheck size={18} color="#4edea3" />
-            <span className="font-mono" style={{ fontSize: '10px', letterSpacing: '0.08em', color: '#4edea3', fontWeight: '800' }}>
+            <span className="font-mono" style={{ fontSize: '10.5px', letterSpacing: '0.08em', color: '#4edea3', fontWeight: '800' }}>
               TIER-1 STANDARDIZED MUNICIPAL BLUEPRINT
             </span>
           </div>
           <span className="font-mono" style={{
             backgroundColor: '#10b981',
             color: '#002113',
-            padding: '2px 7px',
+            padding: '2px 8px',
             borderRadius: '4px',
             fontSize: '10px',
-            fontWeight: '800'
+            fontWeight: '800',
+            letterSpacing: '0.04em'
           }}>
-            PRIORITY-1
+            DEFENSIBLE BENCHMARK
           </span>
         </div>
 
-        <h3 className="font-headline" style={{ fontSize: '17px', fontWeight: '700', color: '#dfe2f1', lineHeight: '22px' }}>
-          {t1.intervention || 'Living Green Biosolar Roofs (Sedum + Solar PV)'}
-        </h3>
+        {/* Recommended Intervention Header with Justification Toggle */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px' }}>
+          <h3 className="font-headline" style={{ fontSize: '17px', fontWeight: '800', color: '#4edea3', lineHeight: '22px' }}>
+            {t1.intervention || 'Living Green Biosolar Roofs (Sedum + Solar PV)'}
+          </h3>
 
-        {/* Expandable Justification Box */}
-        <div style={{
-          padding: '12px',
-          borderRadius: '10px',
-          backgroundColor: 'rgba(10, 14, 24, 0.85)',
-          border: '1px solid rgba(78, 222, 163, 0.25)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px'
-        }}>
-          <p className="font-body" style={{ fontSize: '11.5px', color: '#bbcabf', lineHeight: 1.55 }}>
-            <strong style={{ color: '#dfe2f1' }}>Scientific Mechanism: </strong>
-            {areaJustification.scientific_mechanism}
-          </p>
-          <p className="font-body" style={{ fontSize: '11.5px', color: '#4edea3', lineHeight: 1.55 }}>
-            <strong style={{ color: '#dfe2f1' }}>Beneficiary Footprint: </strong>
-            {areaJustification.local_beneficiaries}
-          </p>
+          <button
+            type="button"
+            onClick={() => setShowAreaJustification(prev => !prev)}
+            title={`View localized justification for ${hotspot.zone}`}
+            style={{
+              background: showAreaJustification
+                ? 'rgba(78, 222, 163, 0.25)'
+                : 'rgba(255, 255, 255, 0.06)',
+              border: showAreaJustification
+                ? '1px solid #4edea3'
+                : '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '20px',
+              padding: '4px 10px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              color: showAreaJustification ? '#4edea3' : '#bbcabf',
+              fontSize: '11px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              flexShrink: 0,
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Lightbulb size={13} color="#4edea3" />
+            <span>Why {hotspot.zone}</span>
+            {showAreaJustification ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          </button>
         </div>
 
-        {/* Key Metrics: Capex, Cooling Delta, ROI */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', paddingTop: '4px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span className="font-mono" style={{ fontSize: '9px', color: '#86948a', letterSpacing: '0.05em' }}>EST. CAPEX</span>
-            <span className="font-headline" style={{ fontSize: '17px', color: '#dfe2f1', fontWeight: '700' }}>
-              {t1.cost_display || '₹1,800/m²'}
-            </span>
+        <p className="font-body" style={{ fontSize: '12px', color: '#dfe2f1', lineHeight: 1.5 }}>
+          {t1.description || 'Application of high solar-reflectance index coating and living vegetative canopy.'}
+        </p>
+
+        {/* Localized Area Justification Card */}
+        {showAreaJustification && areaJustification && (
+          <div
+            className="animate-fade-in"
+            style={{
+              padding: '14px',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(10, 14, 24, 0.85)',
+              border: '1px solid rgba(78, 222, 163, 0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+              <div style={{
+                background: 'rgba(78, 222, 163, 0.2)',
+                border: '1px solid rgba(78, 222, 163, 0.4)',
+                borderRadius: '6px',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                marginTop: '1px'
+              }}>
+                <Target size={14} color="#4edea3" />
+              </div>
+              <div>
+                <div className="font-headline" style={{ fontSize: '12.5px', fontWeight: '800', color: '#6ffbbe', lineHeight: 1.3 }}>
+                  {areaJustification.headline}
+                </div>
+                <div className="font-mono" style={{ fontSize: '10px', color: '#86948a', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                    <MapPin size={10} color="#4edea3" /> Zone: <strong style={{ color: '#fff' }}>{hotspot.zone}</strong>
+                  </span>
+                  <span>•</span>
+                  <span>
+                    Stressor: <strong style={{ color: '#ffb3ad' }}>{(hotspot.cause || 'Heat concentration').replace(/_/g, ' ')}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <p className="font-body" style={{ fontSize: '11.5px', color: '#bbcabf', lineHeight: 1.55 }}>
+              <strong style={{ color: '#dfe2f1' }}>Scientific Mechanism: </strong>
+              {areaJustification.scientific_mechanism}
+            </p>
+            <p className="font-body" style={{ fontSize: '11.5px', color: '#bbcabf', lineHeight: 1.55 }}>
+              <strong style={{ color: '#4edea3' }}>Beneficiary Footprint: </strong>
+              {areaJustification.local_beneficiaries}
+            </p>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span className="font-mono" style={{ fontSize: '9px', color: '#86948a', letterSpacing: '0.05em' }}>COOLING DELTA</span>
-            <span className="font-headline" style={{ fontSize: '17px', color: '#4edea3', fontWeight: '700' }}>
-              -{coolingImpact}°C <span className="font-body" style={{ fontSize: '11px', color: '#bbcabf', fontWeight: '400' }}>LST</span>
-            </span>
+        )}
+
+        {/* RESTORED: Standard Cost & Cooling Impact 2-Column Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {/* Card 1: Standard Cost */}
+          <div style={{
+            background: 'rgba(10, 14, 24, 0.85)',
+            padding: '12px 14px',
+            borderRadius: '10px',
+            border: '1px solid rgba(78, 222, 163, 0.35)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
+            <div className="font-mono" style={{ fontSize: '10px', color: '#86948a', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <DollarSign size={13} color="#4edea3" /> Standard Cost
+            </div>
+            <div className="font-headline" style={{ fontSize: '14.5px', fontWeight: '800', color: '#fff', marginTop: '4px', letterSpacing: '-0.2px' }}>
+              {t1.cost_display || '₹1,800 – ₹2,200 per tree'}
+            </div>
+            {t1.cost_unit && (
+              <div className="font-mono" style={{ fontSize: '9.5px', color: '#6ffbbe', marginTop: '3px' }}>
+                Unit rate: ₹{t1.cost_per_unit?.toLocaleString('en-IN')} {t1.cost_unit}
+              </div>
+            )}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span className="font-mono" style={{ fontSize: '9px', color: '#86948a', letterSpacing: '0.05em' }}>PAYBACK FACTOR</span>
-            <span className="font-headline" style={{ fontSize: '17px', color: '#4cd7f6', fontWeight: '700' }}>
-              4.8x <span className="font-body" style={{ fontSize: '11px', color: '#bbcabf', fontWeight: '400' }}>ROI</span>
-            </span>
+
+          {/* Card 2: Cooling Impact */}
+          <div style={{
+            background: 'rgba(10, 14, 24, 0.85)',
+            padding: '12px 14px',
+            borderRadius: '10px',
+            border: '1px solid rgba(78, 222, 163, 0.35)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
+            <div className="font-mono" style={{ fontSize: '10px', color: '#86948a', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <ArrowDownRight size={13} color="#4edea3" /> Cooling Impact
+            </div>
+            <div className="font-headline" style={{ fontSize: '14.5px', fontWeight: '800', color: '#4edea3', marginTop: '4px', letterSpacing: '-0.2px' }}>
+              {t1.impact_display || `-${coolingImpact}°C microclimate relief`}
+            </div>
+            <div className="font-mono" style={{ fontSize: '9.5px', color: '#bbcabf', marginTop: '3px' }}>
+              Target microclimate relief
+            </div>
           </div>
+        </div>
+
+        {/* RESTORED: Co-Benefits Chips */}
+        {t1.co_benefits && t1.co_benefits.length > 0 && (
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {t1.co_benefits.map((b, i) => (
+              <span key={i} className="font-mono" style={{
+                background: 'rgba(78, 222, 163, 0.12)',
+                fontSize: '10px',
+                color: '#a7f3d0',
+                padding: '4px 9px',
+                borderRadius: '6px',
+                border: '1px solid rgba(78, 222, 163, 0.25)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                <CheckCircle2 size={11} color="#4edea3" /> {b}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* RESTORED: Government Source Citation */}
+        <div className="font-mono" style={{ fontSize: '10px', color: '#86948a', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '8px' }}>
+          Government Source: {t1.source || 'GCC Urban Forestry & C40 Cool Cities Benchmark'}
         </div>
 
         {/* Action Button */}
@@ -412,8 +556,8 @@ export default function DetailPanel({ hotspot, onClose }) {
           onClick={() => setAdopted(true)}
           style={{
             width: '100%',
-            marginTop: '4px',
-            padding: '10px 16px',
+            marginTop: '2px',
+            padding: '11px 16px',
             borderRadius: '10px',
             backgroundColor: adopted ? '#006c49' : '#10b981',
             color: adopted ? '#6ffbbe' : '#003824',
@@ -435,122 +579,218 @@ export default function DetailPanel({ hotspot, onClose }) {
         </button>
       </div>
 
-      {/* 4. TIER 2 GEMINI SYNTHETIC DIAGNOSTICS (Stitch Cyan/Purple Card) */}
+      {/* 4. TIER 2 GEMINI SYNTHETIC DIAGNOSTICS */}
       <div style={{
         position: 'relative',
-        overflow: 'hidden',
         borderRadius: '14px',
         backgroundColor: 'rgba(38, 42, 53, 0.65)',
         border: '1px solid rgba(76, 215, 246, 0.35)',
-        padding: '16px',
+        padding: '18px',
         boxShadow: '0 6px 20px rgba(0, 0, 0, 0.35)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '10px'
+        gap: '12px',
+        flexShrink: 0
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Sparkles size={18} color="#4cd7f6" />
-            <span className="font-mono" style={{ fontSize: '10px', letterSpacing: '0.08em', color: '#4cd7f6', fontWeight: '800' }}>
-              GEMINI SYNTHETIC DIAGNOSTICS
+            <span className="font-mono" style={{ fontSize: '10.5px', letterSpacing: '0.08em', color: '#4cd7f6', fontWeight: '800' }}>
+              TIER-2 GEMINI AI SUGGESTIONS
             </span>
           </div>
           <span className="font-mono" style={{
-            backgroundColor: '#1c1f2a',
-            color: '#bbcabf',
-            padding: '2px 7px',
+            backgroundColor: 'rgba(76, 215, 246, 0.15)',
+            color: '#4cd7f6',
+            border: '1px solid rgba(76, 215, 246, 0.4)',
+            padding: '2px 8px',
             borderRadius: '4px',
             fontSize: '10px',
-            fontWeight: '600'
+            fontWeight: '700'
           }}>
-            GEN-AI 2.5
+            AI-suggested, estimated
           </span>
         </div>
 
+        <p className="font-body" style={{ fontSize: '11.5px', color: '#bbcabf', lineHeight: 1.45 }}>
+          Creative hyper-localized cooling interventions. Costs mapped strictly to verified municipal benchmarks (never invented by AI).
+        </p>
+
         {loadingTier2 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div className="skeleton" style={{ height: '54px' }} />
-            <div className="skeleton" style={{ height: '54px' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div className="skeleton" style={{ height: '74px', borderRadius: '10px' }} />
+            <div className="skeleton" style={{ height: '74px', borderRadius: '10px' }} />
           </div>
         )}
 
         {tier2Error && !loadingTier2 && (
-          <div style={{ fontSize: '11px', color: '#ffb3ad', padding: '8px', background: 'rgba(147, 0, 10, 0.2)', borderRadius: '6px' }}>
+          <div style={{ fontSize: '11px', color: '#ffb3ad', padding: '10px', background: 'rgba(147, 0, 10, 0.3)', border: '1px solid rgba(255, 82, 82, 0.3)', borderRadius: '8px' }}>
             {tier2Error}
           </div>
         )}
 
         {/* Live AI Items from backend */}
         {tier2Data && tier2Data.ideas && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {tier2Data.ideas.map((idea, idx) => (
-              <div
-                key={idx}
-                style={{
-                  padding: '10px 12px',
-                  borderRadius: '8px',
-                  backgroundColor: 'rgba(10, 14, 24, 0.85)',
-                  border: '1px solid rgba(76, 215, 246, 0.2)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span className="font-headline" style={{ fontSize: '12.5px', color: '#dfe2f1', fontWeight: '600' }}>
-                    {idx + 1}. {idea.title}
-                  </span>
-                  <span className="font-mono" style={{ fontSize: '10.5px', color: '#4cd7f6', fontWeight: '700' }}>
-                    {idea.mapped_cost?.cost_display || '₹450/m'}
-                  </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {tier2Data.ideas.map((idea, idx) => {
+              const mc = idea.mapped_cost || {};
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    padding: '14px',
+                    borderRadius: '10px',
+                    backgroundColor: 'rgba(10, 14, 24, 0.85)',
+                    border: '1px solid rgba(76, 215, 246, 0.25)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '6px'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                    <span className="font-headline" style={{ fontSize: '13px', color: '#dfe2f1', fontWeight: '700', lineHeight: 1.35 }}>
+                      {idx + 1}. {idea.title}
+                    </span>
+                    <span className="font-mono" style={{
+                      background: 'rgba(76, 215, 246, 0.15)',
+                      color: '#4cd7f6',
+                      fontSize: '9px',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontWeight: '700',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
+                    }}>
+                      AI Idea
+                    </span>
+                  </div>
+
+                  <p className="font-body" style={{ fontSize: '11.5px', color: '#bbcabf', lineHeight: 1.45 }}>
+                    {idea.concept}
+                  </p>
+
+                  {idea.rationale && (
+                    <div className="font-body" style={{ fontSize: '11px', color: '#4cd7f6', fontStyle: 'italic' }}>
+                      Context: {idea.rationale}
+                    </div>
+                  )}
+
+                  {/* RESTORED: Strictly Mapped Tier 1 Cost Benchmark */}
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px dashed rgba(76, 215, 246, 0.35)',
+                    borderRadius: '8px',
+                    padding: '8px 10px',
+                    fontSize: '11px',
+                    marginTop: '2px'
+                  }}>
+                    <div className="font-mono" style={{ color: '#4cd7f6', fontWeight: '700', marginBottom: '4px', fontSize: '10px' }}>
+                      Mapped Benchmark: {mc.category_name || idea.title}
+                    </div>
+                    <div className="font-mono" style={{ display: 'flex', justifyContent: 'space-between', color: '#dfe2f1', fontSize: '11px', flexWrap: 'wrap', gap: '4px' }}>
+                      <span>Unit Cost: <strong style={{ color: '#fff' }}>{mc.cost_display || '₹450 – ₹650 / m'}</strong></span>
+                      <span>Impact: <strong style={{ color: '#4edea3' }}>{mc.est_impact || '-1.5°C to -2.2°C'}</strong></span>
+                    </div>
+                  </div>
                 </div>
-                <p className="font-body" style={{ fontSize: '11px', color: '#bbcabf', lineHeight: 1.45 }}>
-                  {idea.concept}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
         {/* Fallback default ideas if API is not yet loaded */}
         {!tier2Data && !loadingTier2 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{
-              padding: '10px 12px',
-              borderRadius: '8px',
+              padding: '14px',
+              borderRadius: '10px',
               backgroundColor: 'rgba(10, 14, 24, 0.85)',
+              border: '1px solid rgba(76, 215, 246, 0.25)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '4px'
+              gap: '6px'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span className="font-headline" style={{ fontSize: '12.5px', color: '#dfe2f1', fontWeight: '600' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                <span className="font-headline" style={{ fontSize: '13px', color: '#dfe2f1', fontWeight: '700', lineHeight: 1.35 }}>
                   1. Micro-Misting Canopies @ Transit Terminals
                 </span>
-                <span className="font-mono" style={{ fontSize: '10.5px', color: '#4cd7f6', fontWeight: '700' }}>₹450/m</span>
+                <span className="font-mono" style={{
+                  background: 'rgba(76, 215, 246, 0.15)',
+                  color: '#4cd7f6',
+                  fontSize: '9px',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  fontWeight: '700',
+                  whiteSpace: 'nowrap'
+                }}>
+                  AI Idea
+                </span>
               </div>
-              <p className="font-body" style={{ fontSize: '11px', color: '#bbcabf', lineHeight: 1.45 }}>
+              <p className="font-body" style={{ fontSize: '11.5px', color: '#bbcabf', lineHeight: 1.45 }}>
                 Aerosolizes 20-micron mist plumes during peak afternoon thermal hours (12:00-15:30).
               </p>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px dashed rgba(76, 215, 246, 0.35)',
+                borderRadius: '8px',
+                padding: '8px 10px',
+                fontSize: '11px',
+                marginTop: '2px'
+              }}>
+                <div className="font-mono" style={{ color: '#4cd7f6', fontWeight: '700', marginBottom: '4px', fontSize: '10px' }}>
+                  Mapped Benchmark: Evaporative Misting & Bioswales
+                </div>
+                <div className="font-mono" style={{ display: 'flex', justifyContent: 'space-between', color: '#dfe2f1', fontSize: '11px', flexWrap: 'wrap', gap: '4px' }}>
+                  <span>Unit Cost: <strong style={{ color: '#fff' }}>₹50,000 – ₹80,000 per misting unit</strong></span>
+                  <span>Impact: <strong style={{ color: '#4edea3' }}>-1.5°C to -2.2°C</strong></span>
+                </div>
+              </div>
             </div>
 
             <div style={{
-              padding: '10px 12px',
-              borderRadius: '8px',
+              padding: '14px',
+              borderRadius: '10px',
               backgroundColor: 'rgba(10, 14, 24, 0.85)',
+              border: '1px solid rgba(76, 215, 246, 0.25)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '4px'
+              gap: '6px'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span className="font-headline" style={{ fontSize: '12.5px', color: '#dfe2f1', fontWeight: '600' }}>
-                  2. Calcite-Infused Cool Pavement Coating
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                <span className="font-headline" style={{ fontSize: '13px', color: '#dfe2f1', fontWeight: '700', lineHeight: 1.35 }}>
+                  2. Calcite-Infused High-Albedo Cool Pavement Coating
                 </span>
-                <span className="font-mono" style={{ fontSize: '10.5px', color: '#4cd7f6', fontWeight: '700' }}>₹850/m²</span>
+                <span className="font-mono" style={{
+                  background: 'rgba(76, 215, 246, 0.15)',
+                  color: '#4cd7f6',
+                  fontSize: '9px',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  fontWeight: '700',
+                  whiteSpace: 'nowrap'
+                }}>
+                  AI Idea
+                </span>
               </div>
-              <p className="font-body" style={{ fontSize: '11px', color: '#bbcabf', lineHeight: 1.45 }}>
-                High solar reflectance index (SRI &gt; 80) reduces ground thermal re-radiation.
+              <p className="font-body" style={{ fontSize: '11.5px', color: '#bbcabf', lineHeight: 1.45 }}>
+                High solar reflectance index (SRI &gt; 80) reduces ground thermal absorption and nocturnal heat release.
               </p>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px dashed rgba(76, 215, 246, 0.35)',
+                borderRadius: '8px',
+                padding: '8px 10px',
+                fontSize: '11px',
+                marginTop: '2px'
+              }}>
+                <div className="font-mono" style={{ color: '#4cd7f6', fontWeight: '700', marginBottom: '4px', fontSize: '10px' }}>
+                  Mapped Benchmark: Cool Roofs & Reflective Pavements
+                </div>
+                <div className="font-mono" style={{ display: 'flex', justifyContent: 'space-between', color: '#dfe2f1', fontSize: '11px', flexWrap: 'wrap', gap: '4px' }}>
+                  <span>Unit Cost: <strong style={{ color: '#fff' }}>₹120 – ₹180 per m²</strong></span>
+                  <span>Impact: <strong style={{ color: '#4edea3' }}>-2.0°C to -3.5°C</strong></span>
+                </div>
+              </div>
             </div>
           </div>
         )}
