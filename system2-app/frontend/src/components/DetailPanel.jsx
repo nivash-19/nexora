@@ -205,61 +205,49 @@ export default function DetailPanel({ hotspot, onClose }) {
         pointerEvents: 'auto'
       }}
     >
-      {/* 1. Header & Coordinates Dossier */}
+      {/* 1. Header with Cell ID Pill & Urban Cooling Blueprint Title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexShrink: 0 }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span className="font-mono" style={{
-              background: '#262a35',
-              border: '1px solid rgba(78, 222, 163, 0.3)',
-              padding: '3px 8px',
+            <span style={{
+              background: 'rgba(16, 185, 129, 0.15)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              padding: '2px 8px',
               borderRadius: '6px',
               fontSize: '11px',
-              color: '#4edea3',
+              fontFamily: 'var(--font-mono, monospace)',
+              color: '#34d399',
               fontWeight: '700'
             }}>
-              CELL {hotspot.cell_id}
+              {hotspot.cell_id}
             </span>
-            <span className="font-mono" style={{
-              background: 'rgba(147, 0, 10, 0.85)',
-              border: '1px solid #ff5252',
-              padding: '3px 8px',
-              borderRadius: '6px',
-              fontSize: '10.5px',
-              color: '#ffb3ad',
-              fontWeight: '700'
-            }}>
-              {heatScore.toFixed(2)} CRITICAL
+            <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>•</span>
+            <span style={{ fontSize: '14px', fontWeight: '700', color: '#fff' }}>
+              {hotspot.zone}, Chennai
             </span>
           </div>
 
-          <h2 className="font-headline" style={{ fontSize: '20px', fontWeight: '800', marginTop: '8px', color: '#dfe2f1', textTransform: 'uppercase', letterSpacing: '-0.3px' }}>
-            {hotspot.zone} Cluster
+          <h2 style={{
+            fontFamily: 'var(--font-heading, "Space Grotesk", sans-serif)',
+            fontSize: '22px',
+            fontWeight: '800',
+            marginTop: '6px',
+            letterSpacing: '-0.3px',
+            color: '#f9fafb'
+          }}>
+            Urban Cooling Blueprint
           </h2>
-          <p className="font-body" style={{ fontSize: '11.5px', color: '#bbcabf', marginTop: '2px' }}>
-            {hotspot.lat?.toFixed ? `${hotspot.lat.toFixed(4)}° N, ${hotspot.lon.toFixed(4)}° E` : `${hotspot.lat}° N, ${hotspot.lon}° E`} • {hotspot.cause?.replace(/_/g, ' ') || 'Industrial Thermal Zone'}
-          </p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{
-            padding: '8px',
-            borderRadius: '10px',
-            background: '#262a35',
-            color: '#ff5252',
-            border: '1px solid rgba(255, 82, 82, 0.25)'
-          }}>
-            <Flame size={20} />
-          </div>
-
           <button
             onClick={() => setIsMinimized(true)}
             title="Minimize to dock"
             style={{
-              background: '#1c1f2a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: '#bbcabf',
-              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: '#9ca3af',
+              borderRadius: '50%',
               width: '32px',
               height: '32px',
               cursor: 'pointer',
@@ -269,17 +257,17 @@ export default function DetailPanel({ hotspot, onClose }) {
               transition: 'all 0.15s'
             }}
           >
-            <Minimize2 size={16} />
+            <Minimize2 size={14} />
           </button>
 
           <button
             onClick={onClose}
             title="Close"
             style={{
-              background: '#1c1f2a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: '#dfe2f1',
-              borderRadius: '8px',
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: '#fff',
+              borderRadius: '50%',
               width: '32px',
               height: '32px',
               cursor: 'pointer',
@@ -291,6 +279,65 @@ export default function DetailPanel({ hotspot, onClose }) {
           >
             <X size={16} />
           </button>
+        </div>
+      </div>
+
+      {/* Target Cooling Impact Banner (From User Reference) */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15))',
+        border: '1px solid rgba(16, 185, 129, 0.35)',
+        borderRadius: '14px',
+        padding: '16px',
+        boxShadow: '0 8px 25px rgba(16, 185, 129, 0.15)',
+        flexShrink: 0
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+          <div>
+            <div style={{ fontSize: '11px', color: '#a7f3d0', textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: '600' }}>
+              Target Cooling Impact
+            </div>
+            <div style={{ fontSize: '26px', fontWeight: '800', fontFamily: 'var(--font-heading, "Space Grotesk", sans-serif)', color: '#34d399' }}>
+              -{coolingImpact}°C <span style={{ fontSize: '14px', fontWeight: '500', color: '#a7f3d0' }}>relief</span>
+            </div>
+          </div>
+          <div style={{
+            background: 'rgba(16, 185, 129, 0.25)',
+            border: '1px solid #10b981',
+            color: '#fff',
+            padding: '5px 12px',
+            borderRadius: '20px',
+            fontSize: '11px',
+            fontWeight: '700',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px'
+          }}>
+            <Sparkles size={12} color="#34d399" />
+            High Action Potential
+          </div>
+        </div>
+
+        {/* Before vs After Visual Transformation */}
+        <div style={{
+          background: 'rgba(0, 0, 0, 0.25)',
+          borderRadius: '10px',
+          padding: '10px 14px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '12px',
+          border: '1px solid rgba(255, 255, 255, 0.06)'
+        }}>
+          <div>
+            <span style={{ color: '#9ca3af', fontSize: '11px' }}>Baseline Severity: </span>
+            <strong style={{ color: '#f59e0b' }}>{heatScore.toFixed(3)}</strong>
+          </div>
+          <div style={{ color: '#34d399', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span>→ Post-Intervention:</span>
+            <span style={{ color: '#fff', background: 'rgba(16, 185, 129, 0.3)', padding: '1px 6px', borderRadius: '4px' }}>
+              {(Math.max(0.2, heatScore - 0.35)).toFixed(3)}
+            </span>
+          </div>
         </div>
       </div>
 
