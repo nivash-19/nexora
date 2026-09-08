@@ -22,7 +22,9 @@ export default function Header({
   viewMode,
   onToggleViewMode,
   adoptedCount = 0,
-  onOpenAdoptedModal
+  onOpenAdoptedModal,
+  activeTelemetryLayer = 'diff',
+  setActiveTelemetryLayer
 }) {
   const [currentTime, setCurrentTime] = useState('');
 
@@ -101,23 +103,36 @@ export default function Header({
           </div>
         </div>
 
-        {/* Live Telemetry Pill */}
+        {/* Live Telemetry Pill (Dynamic per active layer) */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
           padding: '6px 16px',
           borderRadius: '9999px',
-          background: 'rgba(38, 42, 53, 0.65)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.08)'
+          background: activeTelemetryLayer === 'tirs'
+            ? 'rgba(147, 0, 10, 0.35)'
+            : activeTelemetryLayer === 'ndvi'
+            ? 'rgba(40, 70, 15, 0.35)'
+            : 'rgba(38, 42, 53, 0.65)',
+          border: activeTelemetryLayer === 'tirs'
+            ? '1px solid rgba(255, 23, 68, 0.45)'
+            : activeTelemetryLayer === 'ndvi'
+            ? '1px solid rgba(132, 204, 22, 0.45)'
+            : '1px solid rgba(78, 222, 163, 0.35)',
+          boxShadow: activeTelemetryLayer === 'tirs'
+            ? '0 0 16px rgba(255, 23, 68, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            : activeTelemetryLayer === 'ndvi'
+            ? '0 0 16px rgba(132, 204, 22, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            : '0 0 16px rgba(78, 222, 163, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
+          transition: 'all 0.3s ease'
         }}>
           <span style={{ position: 'relative', display: 'flex', height: '9px', width: '9px' }}>
             <span style={{
               position: 'absolute',
               inset: 0,
               borderRadius: '50%',
-              backgroundColor: '#ff5252',
+              backgroundColor: activeTelemetryLayer === 'tirs' ? '#ff5252' : activeTelemetryLayer === 'ndvi' ? '#a3e635' : '#4edea3',
               opacity: 0.75,
               animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite'
             }} />
@@ -126,15 +141,28 @@ export default function Header({
               borderRadius: '50%',
               height: '9px',
               width: '9px',
-              backgroundColor: '#ff1744'
+              backgroundColor: activeTelemetryLayer === 'tirs' ? '#ff1744' : activeTelemetryLayer === 'ndvi' ? '#84cc16' : '#10b981'
             }} />
           </span>
-          <span className="font-mono" style={{ fontSize: '11px', color: '#dfe2f1', fontWeight: '600', letterSpacing: '0.04em' }}>
-            CHENNAI LIVE LST 38.8°C
+          <span className="font-mono" style={{
+            fontSize: '11px',
+            color: activeTelemetryLayer === 'tirs' ? '#ffd0cc' : activeTelemetryLayer === 'ndvi' ? '#e2f7bb' : '#dfe2f1',
+            fontWeight: '700',
+            letterSpacing: '0.04em'
+          }}>
+            {activeTelemetryLayer === 'tirs' && '🔥 TIRS THERMAL RADIOMETRY (BAND 10)'}
+            {activeTelemetryLayer === 'ndvi' && '🌿 CANOPY NDVI SPECTRAL VEGETATION'}
+            {activeTelemetryLayer === 'diff' && 'Δ INTERVENTION SIMULATION (BASELINE vs TARGET)'}
           </span>
           <span className="font-mono" style={{ fontSize: '11px', color: '#86948a' }}>|</span>
-          <span className="font-mono" style={{ fontSize: '11px', color: '#ffb3ad', fontWeight: '700' }}>
-            {hotspotCount} CRITICAL CELLS
+          <span className="font-mono" style={{
+            fontSize: '11px',
+            color: activeTelemetryLayer === 'tirs' ? '#ff8a80' : activeTelemetryLayer === 'ndvi' ? '#bef264' : '#4edea3',
+            fontWeight: '700'
+          }}>
+            {activeTelemetryLayer === 'tirs' && `${hotspotCount} THERMAL PEAKS (UP TO 43.5°C)`}
+            {activeTelemetryLayer === 'ndvi' && `${hotspotCount} LOW CANOPY CELLS (< 0.20)`}
+            {activeTelemetryLayer === 'diff' && `${hotspotCount} OPTIMIZED TARGET SITES`}
           </span>
         </div>
 

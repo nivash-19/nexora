@@ -26,6 +26,7 @@ export default function App() {
   const [isAdoptedModalOpen, setIsAdoptedModalOpen] = useState(false);
   const [initialOptimizerBudget, setInitialOptimizerBudget] = useState(null);
   const [viewMode, setViewMode] = useState('solutions'); // 'solutions' (Optimistic Blueprint) or 'baseline'
+  const [activeTelemetryLayer, setActiveTelemetryLayer] = useState('diff'); // 'diff', 'tirs', or 'ndvi'
 
   // Persisted adopted choices across visits
   const [adoptedHotspots, setAdoptedHotspots] = useState(() => {
@@ -168,8 +169,25 @@ export default function App() {
     }
   };
 
+  // Layer-dependent ambient background glow
+  const getAmbientBackground = () => {
+    if (activeTelemetryLayer === 'tirs') {
+      return 'radial-gradient(ellipse 85% 45% at 50% -5%, rgba(255, 23, 68, 0.14), transparent 75%), radial-gradient(circle at 10% 25%, rgba(255, 82, 82, 0.08), transparent 50%), var(--bg-primary)';
+    }
+    if (activeTelemetryLayer === 'ndvi') {
+      return 'radial-gradient(ellipse 85% 45% at 50% -5%, rgba(132, 204, 22, 0.14), transparent 75%), radial-gradient(circle at 90% 25%, rgba(16, 185, 129, 0.09), transparent 50%), var(--bg-primary)';
+    }
+    return 'radial-gradient(ellipse 85% 45% at 50% -5%, rgba(78, 222, 163, 0.12), transparent 75%), radial-gradient(circle at 10% 25%, rgba(76, 215, 246, 0.07), transparent 50%), var(--bg-primary)';
+  };
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      background: getAmbientBackground(),
+      transition: 'background 0.5s ease'
+    }}>
       {/* Top App Header */}
       <Header
         selectedZone={selectedZone}
@@ -183,6 +201,8 @@ export default function App() {
         onToggleViewMode={setViewMode}
         adoptedCount={adoptedCount}
         onOpenAdoptedModal={() => setIsAdoptedModalOpen(true)}
+        activeTelemetryLayer={activeTelemetryLayer}
+        setActiveTelemetryLayer={setActiveTelemetryLayer}
       />
 
       {/* Aggregate City Metrics */}
@@ -191,6 +211,7 @@ export default function App() {
         selectedZone={selectedZone}
         viewMode={viewMode}
         onSelectZone={handleSelectZone}
+        activeTelemetryLayer={activeTelemetryLayer}
       />
 
       {/* Main Map & Interactive Work Area */}
@@ -272,10 +293,12 @@ export default function App() {
           selectedZone={selectedZone}
           recenterRequest={recenterRequest}
           onSelectZone={handleSelectZone}
+          activeTelemetryLayer={activeTelemetryLayer}
+          setActiveTelemetryLayer={setActiveTelemetryLayer}
         />
 
         {/* Map Legend Overlay */}
-        <Legend viewMode={viewMode} />
+        <Legend viewMode={viewMode} activeTelemetryLayer={activeTelemetryLayer} />
 
         {/* Detail Panel Drawer */}
         {selectedHotspot && (
