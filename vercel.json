@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm --prefix system2-app/frontend run build",
+  "installCommand": "npm --prefix system2-app/frontend install",
+  "outputDirectory": "system2-app/frontend/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
