@@ -114,10 +114,34 @@ def test_chat_endpoint():
     assert "suggested_followups" in data
     print(f"PASS: /api/chat answered query successfully (source: {data['source']})")
 
+def test_live_telemetry():
+    response = client.get("/api/telemetry/live")
+    assert response.status_code == 200
+    data = response.json()
+    assert "temperature_2m" in data
+    assert "direct_normal_irradiance" in data
+    assert "weather_condition" in data
+    assert "synced_at" in data
+    assert "station_city" in data
+    print(f"PASS: /api/telemetry/live returning {data['temperature_2m']}°C, {data['direct_normal_irradiance']} W/m² ({data['weather_condition']})")
+
+    # Also verify that /api/hotspots has live temperature and telemetry attached
+    h_resp = client.get("/api/hotspots?refresh=true")
+    assert h_resp.status_code == 200
+    hotspots = h_resp.json()
+    assert len(hotspots) > 0
+    first = hotspots[0]
+    assert "temperature_celsius" in first
+    assert float(first["temperature_celsius"]) > 30.0
+    assert "live_telemetry" in first
+    assert first["live_telemetry"]["ambient_celsius"] is not None
+    print(f"PASS: /api/hotspots?refresh=true dynamically attached live LST ({first['temperature_celsius']}°C) and telemetry")
+
 if __name__ == "__main__":
     print("\n--- RUNNING BACKEND TESTS ---")
     test_root()
     test_health()
+    test_live_telemetry()
     test_get_hotspots()
     test_get_hotspots_zone_filter()
     test_get_single_grid_cell()
@@ -126,4 +150,5 @@ if __name__ == "__main__":
     test_optimize_budget()
     test_chat_endpoint()
     print("\n>>> ALL BACKEND TESTS PASSED! <<<\n")
+
 

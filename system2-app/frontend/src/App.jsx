@@ -119,13 +119,22 @@ export default function App() {
   const adoptedCount = Object.keys(adoptedHotspots).length;
   const totalAdoptedCost = Object.values(adoptedHotspots).reduce((sum, item) => sum + (Number(item.cost) || 0), 0);
 
-  const fetchHotspots = (retryCount = 0) => {
+  const [liveTelemetry, setLiveTelemetry] = useState(null);
+  const [isTelemetrySyncing, setIsTelemetrySyncing] = useState(false);
+
+  const fetchHotspots = (retryCount = 0, forceRefresh = false) => {
     setLoading(true);
+    if (forceRefresh) setIsTelemetrySyncing(true);
     setError(null);
-    axios.get(ENDPOINTS.HOTSPOTS, { timeout: 20000 })
+    const targetUrl = forceRefresh ? ENDPOINTS.HOTSPOTS_REFRESH : ENDPOINTS.HOTSPOTS;
+    axios.get(targetUrl, { timeout: 20000 })
       .then(res => {
         setHotspots(res.data);
+        if (res.data && res.data.length > 0 && res.data[0].live_telemetry) {
+          setLiveTelemetry(res.data[0].live_telemetry);
+        }
         setLoading(false);
+        setIsTelemetrySyncing(false);
         setError(null);
         // Default select first hotspot if none selected
         if (res.data && res.data.length > 0 && !selectedHotspot) {
@@ -134,9 +143,10 @@ export default function App() {
       })
       .catch(err => {
         console.error('Error fetching hotspots:', err);
+        setIsTelemetrySyncing(false);
         // If first attempt failed on production, auto-retry once after 4s to allow Render cold start
         if (retryCount < 2) {
-          setTimeout(() => fetchHotspots(retryCount + 1), 3500);
+          setTimeout(() => fetchHotspots(retryCount + 1, forceRefresh), 3500);
           return;
         }
         const isProd = import.meta.env.PROD;
@@ -198,8 +208,10 @@ export default function App() {
         onOpenAIBudgetAdvisor={() => setIsAIBudgetAdvisorOpen(true)}
         onOpenChatbot={() => setIsChatbotOpen(true)}
         hotspotCount={filteredHotspots.length}
-        onRefresh={fetchHotspots}
+        onRefresh={() => fetchHotspots(0, true)}
         loading={loading}
+        liveTelemetry={liveTelemetry}
+        isTelemetrySyncing={isTelemetrySyncing}
         viewMode={viewMode}
         onToggleViewMode={setViewMode}
         adoptedCount={adoptedCount}
@@ -215,6 +227,7 @@ export default function App() {
         viewMode={viewMode}
         onSelectZone={handleSelectZone}
         activeTelemetryLayer={activeTelemetryLayer}
+        liveTelemetry={liveTelemetry}
       />
 
       {/* Main Map & Interactive Work Area */}

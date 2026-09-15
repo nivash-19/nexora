@@ -5,6 +5,8 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
 
 export const ENDPOINTS = {
   HOTSPOTS: `${API_BASE_URL}/api/hotspots`,
+  HOTSPOTS_REFRESH: `${API_BASE_URL}/api/hotspots?refresh=true`,
+  LIVE_TELEMETRY: (refresh = false) => `${API_BASE_URL}/api/telemetry/live${refresh ? '?refresh=true' : ''}`,
   GRID_CELL: (id) => `${API_BASE_URL}/api/grid/${id}`,
   TIER2_AI: (id) => `${API_BASE_URL}/api/tier2/${id}`,
   OPTIMIZE_BUDGET: `${API_BASE_URL}/api/optimize-budget`,

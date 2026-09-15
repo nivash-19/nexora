@@ -17,6 +17,7 @@ from tier2 import generate_tier2_recommendations
 from data_loader import load_hotspots_raw, get_data_source_status
 from optimizer import optimize_budget_allocation
 from chatbot import answer_doubt
+from telemetry import get_live_telemetry, compute_live_cell_temperature
 
 app = FastAPI(
     title="HeatScape API — System 2",
@@ -58,6 +59,7 @@ def root():
             "/api/grid/{id}",
             "/api/tier2/{grid_id}",
             "/api/optimize-budget",
+            "/api/telemetry/live",
             "/api/health"
         ]
     }
@@ -66,22 +68,55 @@ def root():
 def health_check():
     status = get_data_source_status()
     raw = load_hotspots_raw()
+    telemetry = get_live_telemetry()
     return {
         "status": "healthy",
         "hotspots_count": len(raw),
-        "data_source": status
+        "data_source": status,
+        "telemetry": {
+            "is_live": telemetry.get("is_live", False),
+            "ambient_celsius": telemetry.get("temperature_2m"),
+            "solar_irradiance_wm2": telemetry.get("direct_normal_irradiance"),
+            "condition": telemetry.get("weather_condition"),
+            "synced_at": telemetry.get("synced_at")
+        }
     }
 
-@app.get("/api/hotspots")
-def get_all_hotspots(zone: Optional[str] = None):
+@app.get("/api/telemetry/live")
+def get_current_telemetry(refresh: bool = False):
     """
-    Returns all hotspots enriched with heat_score, cause, and verified Tier 1 recommendations.
+    Returns real-time atmospheric and solar irradiance telemetry for Chennai
+    from Open-Meteo, with 90-second in-memory caching. Pass ?refresh=true to force re-fetch.
+    """
+    return get_live_telemetry(force_refresh=refresh)
+
+@app.get("/api/hotspots")
+def get_all_hotspots(zone: Optional[str] = None, refresh: bool = False):
+    """
+    Returns all hotspots enriched with live dynamic temperature, heat_score, cause,
+    and verified Tier 1 recommendations. Supports ?refresh=true for live re-sync.
     """
     raw_hotspots = load_hotspots_raw()
     if not raw_hotspots:
         return []
     
-    enriched = [attach_tier1(h) for h in raw_hotspots]
+    telemetry = get_live_telemetry(force_refresh=refresh)
+    enriched = []
+    for h in raw_hotspots:
+        item = attach_tier1(h)
+        # Dynamically compute cell-level LST based on live solar flux & urban morphology
+        item["temperature_celsius"] = compute_live_cell_temperature(item, telemetry)
+        item["live_telemetry"] = {
+            "ambient_celsius": telemetry.get("temperature_2m"),
+            "apparent_celsius": telemetry.get("apparent_temperature"),
+            "solar_flux_wm2": telemetry.get("direct_normal_irradiance"),
+            "humidity_pct": telemetry.get("relative_humidity_2m"),
+            "wind_speed_kmh": telemetry.get("wind_speed_10m"),
+            "weather_condition": telemetry.get("weather_condition"),
+            "is_live": telemetry.get("is_live", False),
+            "synced_at": telemetry.get("synced_at")
+        }
+        enriched.append(item)
     
     if zone:
         enriched = [h for h in enriched if h.get("zone", "").lower() == zone.lower()]
@@ -91,7 +126,7 @@ def get_all_hotspots(zone: Optional[str] = None):
 @app.get("/api/grid/{grid_id}")
 def get_single_grid_cell(grid_id: str):
     """
-    Returns full detail for a single cell by its cell_id.
+    Returns full detail for a single cell by its cell_id with live temperature.
     """
     raw_hotspots = load_hotspots_raw()
     matching = None
@@ -106,7 +141,20 @@ def get_single_grid_cell(grid_id: str):
             detail=f"Hotspot cell '{grid_id}' not found."
         )
         
-    return attach_tier1(matching)
+    telemetry = get_live_telemetry()
+    item = attach_tier1(matching)
+    item["temperature_celsius"] = compute_live_cell_temperature(item, telemetry)
+    item["live_telemetry"] = {
+        "ambient_celsius": telemetry.get("temperature_2m"),
+        "apparent_celsius": telemetry.get("apparent_temperature"),
+        "solar_flux_wm2": telemetry.get("direct_normal_irradiance"),
+        "humidity_pct": telemetry.get("relative_humidity_2m"),
+        "wind_speed_kmh": telemetry.get("wind_speed_10m"),
+        "weather_condition": telemetry.get("weather_condition"),
+        "is_live": telemetry.get("is_live", False),
+        "synced_at": telemetry.get("synced_at")
+    }
+    return item
 
 @app.get("/api/tier2/{grid_id}")
 def get_tier2_recommendations_endpoint(grid_id: str):

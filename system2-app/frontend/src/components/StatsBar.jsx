@@ -6,7 +6,8 @@ export default function StatsBar({
   selectedZone = 'All Zones',
   viewMode = 'solutions',
   onSelectZone,
-  activeTelemetryLayer = 'diff'
+  activeTelemetryLayer = 'diff',
+  liveTelemetry = null
 }) {
   if (!hotspots.length) return null;
 
@@ -131,7 +132,7 @@ export default function StatsBar({
               Peak Radiometric LST
             </div>
             <div style={{ fontSize: '22px', fontWeight: '800', fontFamily: 'var(--font-heading)', color: '#ff5252', marginTop: '2px' }}>
-              {peakTemp}°C <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '400' }}>peak surface heat</span>
+              {peakTemp}°C <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '400' }}>{liveTelemetry?.ambient_celsius ? `(live ambient ${liveTelemetry.ambient_celsius}°C)` : 'peak surface heat'}</span>
             </div>
           </div>
         </div>

@@ -20,6 +20,8 @@ export default function Header({
   hotspotCount,
   onRefresh,
   loading,
+  liveTelemetry,
+  isTelemetrySyncing = false,
   viewMode,
   onToggleViewMode,
   adoptedCount = 0,
@@ -167,42 +169,73 @@ export default function Header({
           </span>
         </div>
 
-        {/* Right Actions: Clock, Satellite status, Export */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+        {/* Right Actions: Live Weather Telemetry, Clock, Dynamic Sync */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          {liveTelemetry && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'rgba(16, 185, 129, 0.12)',
+              border: '1px solid rgba(78, 222, 163, 0.3)',
+              borderRadius: '9999px',
+              padding: '4px 12px',
+              boxShadow: '0 0 12px rgba(16, 185, 129, 0.15)'
+            }}>
+              <span style={{
+                height: '7px',
+                width: '7px',
+                borderRadius: '50%',
+                backgroundColor: '#4edea3',
+                boxShadow: '0 0 8px #4edea3',
+                display: 'inline-block',
+                animation: isTelemetrySyncing ? 'ping 1s infinite' : 'none'
+              }} />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span className="font-mono" style={{ fontSize: '10px', color: '#4edea3', fontWeight: '800', letterSpacing: '0.04em' }}>
+                  CHENNAI LIVE {liveTelemetry.ambient_celsius}°C
+                </span>
+                <span className="font-mono" style={{ fontSize: '9px', color: '#bbcabf' }}>
+                  {liveTelemetry.solar_flux_wm2 ? `${Math.round(liveTelemetry.solar_flux_wm2)} W/m² Flux` : 'Solar Radiance'} • {liveTelemetry.weather_condition || 'Clear'}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <span className="font-mono" style={{ fontSize: '12px', color: '#4cd7f6', fontWeight: '700', letterSpacing: '0.05em' }}>
               {currentTime || '14:48:22 IST'}
             </span>
             <span className="font-mono" style={{ fontSize: '9.5px', color: '#86948a', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Radio size={10} color="#4edea3" /> INSAT-3DR ONLINE
+              <Radio size={10} color="#4edea3" /> {liveTelemetry?.is_live ? 'TELEMETRY LIVE' : 'INSAT-3DR ONLINE'}
             </span>
           </div>
-
 
           {/* Refresh / Re-run Sync */}
           <button
             onClick={onRefresh}
-            title="Refresh satellite telemetry from API"
+            title="Force refresh live weather and satellite telemetry"
+            disabled={isTelemetrySyncing || loading}
             style={{
-              background: '#1c1f2a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: '#dfe2f1',
+              background: isTelemetrySyncing ? 'rgba(78, 222, 163, 0.2)' : '#1c1f2a',
+              border: isTelemetrySyncing ? '1px solid #4edea3' : '1px solid rgba(255, 255, 255, 0.08)',
+              color: isTelemetrySyncing ? '#4edea3' : '#dfe2f1',
               borderRadius: '8px',
               padding: '6px 12px',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              cursor: 'pointer',
+              cursor: (isTelemetrySyncing || loading) ? 'wait' : 'pointer',
               fontSize: '11px',
               fontWeight: '600',
               fontFamily: 'var(--font-mono)',
               transition: 'all 0.15s ease'
             }}
-            onMouseOver={(e) => { e.currentTarget.style.background = '#262a35'; }}
-            onMouseOut={(e) => { e.currentTarget.style.background = '#1c1f2a'; }}
+            onMouseOver={(e) => { if (!isTelemetrySyncing) e.currentTarget.style.background = '#262a35'; }}
+            onMouseOut={(e) => { if (!isTelemetrySyncing) e.currentTarget.style.background = '#1c1f2a'; }}
           >
-            <RefreshCw size={13} className={loading ? 'spinning' : ''} />
-            <span>SYNC</span>
+            <RefreshCw size={13} className={isTelemetrySyncing || loading ? 'spinning' : ''} />
+            <span>{isTelemetrySyncing ? 'SYNCING...' : 'LIVE SYNC'}</span>
           </button>
         </div>
       </header>
