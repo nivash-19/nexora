@@ -1,6 +1,7 @@
 services:
+  # Backend API Service (FastAPI)
   - type: web
-    name: heatscape-backend
+    name: heatscape-nexora
     env: python
     region: singapore
     plan: free
@@ -12,3 +13,19 @@ services:
         value: 3.11.8
       - key: GEMINI_API_KEY
         sync: false
+
+  # Frontend Static Web App (Alternative to Vercel that bypasses campus Wi-Fi blocks)
+  - type: web
+    name: heatscape-nexora-ui
+    env: static
+    region: singapore
+    rootDir: system2-app/frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://heatscape-nexora.onrender.com

@@ -2,7 +2,12 @@
   "name": "heatscape-nexora",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "system2-app/frontend"
+  ],
   "scripts": {
-    "build": "npm --prefix system2-app/frontend run build"
+    "install:frontend": "npm --prefix system2-app/frontend install",
+    "build": "npm --prefix system2-app/frontend run build",
+    "dev": "npm --prefix system2-app/frontend run dev"
   }
 }
